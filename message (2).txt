@@ -5522,7 +5522,7 @@ end
 
 questSettingsSection = createSection(autoQuestTab, "Quests Settings")
 createToggle(questSettingsSection, "Teleport to npc", {"autoQuestSettings", "tpToNPC"}, true)
--- createToggle(questSettingsSection, "Teleport ants", {"autoQuestSettings", "doAnts"}, true)
+createToggle(questSettingsSection, "Teleport ants", {"autoQuestSettings", "doAnts"}, true)
 createToggle(questSettingsSection, "Do Pollen Quests", {"autoQuestSettings", "farmPollen"}, true)
 createToggle(questSettingsSection, "Do Goo Quests", {"autoQuestSettings", "farmGoo"}, true)
 createToggle(questSettingsSection, "Kill Mobs For Quests", {"autoQuestSettings", "killMobs"}, true)
