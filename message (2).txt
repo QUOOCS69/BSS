@@ -4744,14 +4744,14 @@ end
 function generateWebhookBody(settings)
 	local body = {
 		["username"] = player.Name,
-		["avatar_url"] = "https://cdn.discordapp.com/icons/1042214900732276777/a_e87e366be05df35674186e219b2bc400.gif?size=4096",
+		["avatar_url"] = "https://cdn.discordapp.com/icons/1024873171867942933/a_9c03ad84c8288aa059c9cfb3ed65aa9d.gif?size=48",
 		["content"] = settings.content or "",
 		["embeds"] = {{
 			["title"] = "**"..settings.embedTitle.."**",
 			["description"] = settings.embedDescription or "",
 			["type"] = "rich",
 			["color"] = tonumber(settings.color) or tonumber(macrov2.webhookSettings.webhookColor),
-			["thumbnail"] = {url = settings.thumbnail or "https://cdn.discordapp.com/icons/1042214900732276777/a_e87e366be05df35674186e219b2bc400.gif?size=4096"},
+			["thumbnail"] = {url = settings.thumbnail or "https://cdn.discordapp.com/icons/1024873171867942933/a_9c03ad84c8288aa059c9cfb3ed65aa9d.gif?size=96"},
 			["fields"] = settings.fields or {},
 			["footer"] = {
 				["text"] = os.date("%x").." • "..os.date("%I")..":"..os.date("%M")..--[[":"..os.date("%S")..]]" "..os.date("%p")
@@ -6488,9 +6488,10 @@ LPH_NO_VIRTUALIZE(function()
             return
         end
     end
-end)()
+end)
 
 print("[Macro V3]:", "Executed Successfully!")
+
 local UserInputService, RunService = game:GetService("UserInputService"), game:GetService("RunService")
 
 UserInputService.WindowFocusReleased:Connect(function()
@@ -6500,4 +6501,3 @@ end)
 UserInputService.WindowFocused:Connect(function()
 	RunService:Set3dRenderingEnabled(true);
 end)
-
