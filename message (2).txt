@@ -3631,7 +3631,7 @@ function farmShowerAndCoco()
         while #temptable.showersTable > 0 do
             local key, warningisk = next(temptable.showersTable)
             if warningisk and warningisk.Parent and warningisk.Transparency > 0.09 then
-                startTween(warningisk.Position, 0.05, true)
+                startTween(warningisk.Position, 350)
                 -- tween(0.05, warningisk.Position, true)
                 repeat task.wait()
                 until not warningisk.Parent or warningisk.Transparency <= 0.08
@@ -3643,17 +3643,19 @@ function farmShowerAndCoco()
         end
         collectNearestTokens()
     elseif #temptable.coconutsTable > 0 and macrov2.autoFarmSettings.farmCoconuts then
-        local key, warningisk = next(temptable.coconutsTable)
-        if warningisk and warningisk.Parent and warningisk.Transparency > 0.09 then
-            startTween(warningisk.Position, 150)
-            -- tween(150, warningisk.Position)
-            repeat task.wait()
-            until not warningisk.Parent or warningisk.Transparency <= 0.08
-            temptable.coconutsTable[key] = nil
-        else
-            temptable.coconutsTable[key] = nil
+        while #temptable.showersTable <= 0 and #temptable.coconutsTable > 0 do
+            local key, warningisk = next(temptable.coconutsTable)
+            if warningisk and warningisk.Parent and warningisk.Transparency > 0.09 then
+                startTween(warningisk.Position, 350)
+                -- tween(150, warningisk.Position)
+                repeat task.wait()
+                until not warningisk.Parent or warningisk.Transparency <= 0.08
+                temptable.coconutsTable[key] = nil
+            else
+                temptable.coconutsTable[key] = nil
+            end
+            task.wait()
         end
-        task.wait()
         collectNearestTokens()
     end
 end
