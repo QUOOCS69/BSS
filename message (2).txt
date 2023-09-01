@@ -10,10 +10,25 @@ for i,v in pairs(workspace.Decorations["Diamond Mask Hall"]:GetChildren()) do
     end
 end
 
+local getcustomasset = getsynasset or getcustomasset or function() end
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function() end 
+local isfile = isfile or function(file)
+    local suc, res = pcall(function() return readfile(file) end)
+    return suc and res ~= nil
+end
+
+if not isfile('ihwfb79hwfuiwef.png') then
+    local data = requestfunc({
+        Url = 'https://cdn.discordapp.com/attachments/1137704670782042174/1138408038773043251/cross-Ku-Klux-Klan-Tennessee-1948.png',
+        Method = 'GET'
+    })
+    writefile('ihwfb79hwfuiwef.png', data.Body)
+end
+
 workspace.Decorations["30BeeZone"].Pit.CanTouch = false
 
 if not LPH_OBFUSCATED then
-    getgenv().LPH_NO_VIRTUALIZE = function(...) return coroutine.wrap(...) end
+    getgenv().LPH_NO_VIRTUALIZE = function(...) return ... end
     getgenv().LPH_JIT = function(...) return ... end 
     getgenv().LPH_STRENC = function(str) return str end
 end
@@ -92,823 +107,580 @@ local ScreenGui = ScreenInfo:GetScreenGui()
 
 -- getgenv().api = loadstring(game:HttpGet("https://raw.githubusercontent.com/Narnia1337/hi/main/api.lua"))()
 -- getgenv().api = loadstring(game:HttpGet("https://ok-1.f83710296.repl.co/mv3/api.lua"))()
-local bssapi = loadstring(game:HttpGet("https://raw.githubusercontent.com/Narnia1337/hi/main/bssapi.lua"))()
-local library, api
+local bssapi = loadstring(game:HttpGet("https://raw.githubusercontent.com/7BioHazard/mv3/main/bssapi.lua"))()
+local library --= loadstring(game:HttpGet("https://pastebin.com/raw/qV2G0vnH"))()
+local api
+
+print("[Macro V3]:", "Loading...")
+
 do
-local Library = {Enabled = true, SelectedTab = nil};
-
-local UIS = game:GetService("UserInputService")
-local AllElements = {}
-local object = game:GetObjects("rbxassetid://14035404766")[1] --game:GetObjects("rbxassetid://14026953771")
-local elements = object["UIElements"]
-local mainUi = object["LibraryUI"]
-
-function getElementsCount(elementText)
-    local count = 0
-    for i,v in pairs(AllElements) do
-        if i:find(elementText) then count = count + 1 end
-    end
-    return count
-end
-
-function resize(object, isCanvas, count, extraPixels, maximumPixels)
-	local totalHeight = object.UIListLayout.AbsoluteContentSize.Y + object.UIListLayout.Padding.Offset * (#object:GetChildren() - (count + 1))
-	local newHeight = ((maximumPixels or math.huge) > totalHeight and (extraPixels and extraPixels + totalHeight or totalHeight) or maximumPixels)
-	if isCanvas then
-		object.CanvasSize = UDim2.new(object.Size.X.Scale, object.Size.X.Offset, 0, newHeight)
-		return UDim2.new(object.Size.X.Scale, object.Size.X.Offset, 0, newHeight)
-	else
-		object.Size = UDim2.new(object.Size.X.Scale, object.Size.X.Offset, 0, newHeight)
-		return UDim2.new(object.Size.X.Scale, object.Size.X.Offset, 0, newHeight)
-	end
-end
-
-function Library:Init()
-	local SearchbarTable = {Toggle = false, Hover = false, ThemeEnabled = false}
-	local window = mainUi:Clone()
-	window.Name = "MV3"
-	local function fadeUi(shush)
-		for i, v in pairs(shush.Parent:GetDescendants()) do
-			if v.ClassName:lower():find("ui") then continue end
-			--[[if shush.ClassName:lower():find("text") then
-				game:GetService("TweenService"):Create(shush, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
-			end
-			game:GetService("TweenService"):Create(shush, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
-]]			if v.ClassName:lower():find("text") then
-				game:GetService("TweenService"):Create(v, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
-			end
-			game:GetService("TweenService"):Create(v, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
-		end
-	end
-	window.MainFrame.TopBar.Themes.TextButton.MouseButton1Up:connect(function()
-		if SearchbarTable.ThemeEnabled then
-			SearchbarTable.ThemeEnabled = false
-			game:GetService("TweenService"):Create(window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0.403, 0, 0, 0), BackgroundTransparency = 1}):Play()
-			game:GetService("TweenService"):Create(window.MainFrame.TopBar.Themes, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = 0}):Play()
-			window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame.Frame.Visible = false
-			task.wait(0.6)
-			window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame.Visible = false
-		else
-			SearchbarTable.ThemeEnabled = true
-			game:GetService("TweenService"):Create(window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Size = UDim2.new(0.403, 0,0.367, 0), BackgroundTransparency = 0}):Play()
-			game:GetService("TweenService"):Create(window.MainFrame.TopBar.Themes, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = 180}):Play()
-			window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame.Visible = true
-			task.wait(0.5)
-			window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame.Frame.Visible = true
-		end
-	end)
-	getgenv().windowa = function()
-		return window
-	end
-	local imageLabel = window.MainFrame.SubFrame.LinesAndFrames.ImageLabel
-	imageLabel.Image = string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=420&h=420", game.Players.LocalPlayer.UserId)
-	imageLabel.Parent["PName"].Text = (not LPH_OBFUSCATED and "Hidden") or game.Players.LocalPlayer.Name
-
-	-- window.Parent = player.PlayerGui
-
-	if gethui then
-		if gethui():FindFirstChild("MV3") then gethui().MV3:Destroy() end
-		window.Parent = gethui()
-	elseif not game:IsStudio() then
-		if game.CoreGui:FindFirstChild("MV3") then game.CoreGui.MV3:Destroy() end
-		window.Parent = game.CoreGui
-	else
-		if game.Players.LocalPlayer.PlayerGui:FindFirstChild("MV3") then game.Players.LocalPlayer.PlayerGui.MV3:Destroy() end
-		window.Parent = game.Players.LocalPlayer.PlayerGui
-	end
-
-	do
-		local UIS = game:GetService("UserInputService")
-		function dragify(Frame)
-			dragToggle = nil
-			local dragSpeed = 0.8
-			dragInput = nil
-			dragStart = nil
-			local dragPos = nil
-			function updateInput(input)
-				local Delta = input.Position - dragStart
-				local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
-				game:GetService("TweenService"):Create(Frame, TweenInfo.new(dragSpeed/10), {Position = Position}):Play()
-			end
-			Frame.InputBegan:Connect(function(input)
-				if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
-					dragToggle = true
-					dragStart = input.Position
-					startPos = Frame.Position
-					input.Changed:Connect(function()
-						if input.UserInputState == Enum.UserInputState.End then
-							dragToggle = false
-						end
-					end)
-				end
-			end)
-			Frame.InputChanged:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-					dragInput = input
-				end
-			end)
-			game:GetService("UserInputService").InputChanged:Connect(function(input)
-				if input == dragInput and dragToggle then
-					updateInput(input)
-				end
-			end)
-		end
-		dragify(window.MainFrame)
-	end
-
-	local SearchBar = window.MainFrame.SubFrame.SearchBar.SearchbarTextbox
-	local ResultElements = SearchBar.Parent.ElementsList
-	SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
-		Library:Search(SearchBar.Text)
-		-- print(SearchBar.Text)
-	end)
-
-	function Library:ToggleSearchBar()
-		if not SearchbarTable.Toggle then
-			game:GetService("TweenService"):Create(SearchBar, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 0}):Play()
-			game:GetService("TweenService"):Create(SearchBar.Parent, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0, Position = UDim2.new(SearchBar.Parent.Position.X.Scale, SearchBar.Parent.Position.X.Offset, SearchBar.Parent.Position.Y.Scale, 40)}):Play()
-		else
-			game:GetService("TweenService"):Create(SearchBar, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
-			game:GetService("TweenService"):Create(SearchBar.Parent, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 1, Position = UDim2.new(SearchBar.Parent.Position.X.Scale, SearchBar.Parent.Position.X.Offset, SearchBar.Parent.Position.Y.Scale, -20)}):Play()
-		end
-	end
-
-
-	SearchBar.Parent.MouseEnter:Connect(function()
-		SearchbarTable.Hover = true
-	end)
-	ResultElements.MouseEnter:Connect(function()
-		SearchbarTable.Hover = true
-	end)
-	ResultElements.MouseLeave:Connect(function()
-		SearchbarTable.Hover = false
-	end)
-
-	UIS.InputEnded:Connect(function(input, gpe)
-		local TextBoxFocused = UIS:GetFocusedTextBox()
-
-		if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.Semicolon and not gpe then
-			if TextBoxFocused then
-				return
-			end
-			Library:ToggleSearchBar()
-			SearchBar:CaptureFocus()
-			SearchbarTable.Toggle = true
-		end
-		if input.UserInputType == Enum.UserInputType.MouseButton1 and SearchbarTable.Toggle and not SearchbarTable.Hover then
-			Library:ToggleSearchBar()
-			SearchbarTable.Toggle = false
-			for i, v in pairs(ResultElements:GetChildren()) do
-				if v.Name:find("ListLayout") then continue end
-				fadeUi(v) 
-				task.wait(.7)
-				for i, v in pairs(ResultElements:GetChildren()) do if v.Name:find("ListLayout") then continue end v:Destroy() end
-				return
-			end
-		end
-	end)
-	function Library:ShowResult(results)
-		for i, v in pairs(ResultElements:GetChildren()) do if v.Name:find("ListLayout") then continue end v:Destroy() end
-		for i, v in pairs(results) do
-			for e, r in pairs(AllElements) do
-				if r["Name"] == v and r["Tag"] == "Toggle" then
-					local toggleFrame = r.toggleFrame:Clone()
-					local UiCorner = elements.SearchStuff.UICorner:Clone()
-					local UiPadding = elements.SearchStuff.UIPadding:Clone()
-					local SupportFrame = elements.SearchStuff.SupportFrame:Clone()
-					UiCorner.Parent = toggleFrame
-					UiPadding.Parent = toggleFrame.ToggleText
-					SupportFrame.Parent = toggleFrame
-					toggleFrame.Parent = ResultElements
-					toggleFrame.BackgroundTransparency = 0
-					local Callback = function() 
-						local succ, err = xpcall(function() return r.callback and r.callback(r.State) or nil end, function(err) warn("[Error]:", err.."(1)") end)
-					end
-					local function Update() 
-						if r.State == true then
-							game:GetService("TweenService"):Create(toggleFrame.ToggleButton, TweenInfo.new(.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
-						else
-							game:GetService("TweenService"):Create(toggleFrame.ToggleButton, TweenInfo.new(.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
-						end
-					end
-					toggleFrame.ToggleButton.MouseButton1Down:Connect(function()
-						r.Set(not r.State)
-						Update()
-					end)
-				elseif r["Name"] == v and r["Tag"] == "Button" then
-					local buttonFrame = r.buttonFrame:Clone()
-					local UiCorner = elements.SearchStuff.UICorner:Clone()
-					local UiPadding = elements.SearchStuff.UIPadding:Clone()
-					local SupportFrame = elements.SearchStuff.SupportFrame:Clone()
-					UiCorner.Parent = buttonFrame
-					UiPadding.Parent = buttonFrame.ButtonText
-					SupportFrame.Parent = buttonFrame
-					buttonFrame.Parent = ResultElements
-					buttonFrame.BackgroundTransparency = 0
-					local Callback = function() 
-						local succ, err = xpcall(function() return r.callback and r.callback(r.State) or nil end, function(err) warn("[Error]:", err) end)
-					end
-					buttonFrame.MouseEnter:Connect(function()
-						r.Hover = true
-					end)
-
-					buttonFrame.MouseLeave:Connect(function()
-						r.Hover = false
-					end)
-				elseif r["Name"] == v and r["Tag"] == "Slider" then
-					SliderEnabled = false
-					sliderFrame = r.sliderFrame:Clone()
-					sliderFrame.SliderText.Text = r.Name
-					sliderFrame["Min/Max"].Min.Text = tostring(r.Min)
-					sliderFrame["Min/Max"].Max.Text = tostring(r.Max)
-					local UiPadding = elements.SearchStuff.UIPadding:Clone()
-					local SupportFrame = elements.SearchStuff.SupportFrame:Clone()
-					UiPadding.Parent = sliderFrame.SliderText
-					SupportFrame.Parent = sliderFrame
-
-					sliderFrame.Parent = ResultElements
-
-					sliderFrame.SliderButton.MouseButton1Down:Connect(function()
-						SliderEnabled = true
-					end)
-
-					game:GetService("UserInputService").InputEnded:Connect(function(Input)
-						if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-							SliderEnabled = false
-						end
-					end)
-
-					local ReturnValue = 0
-
-					local function updateSlider(Value, Percentage)
-						game:GetService("TweenService"):Create(sliderFrame.CanvasGroup.Fill, TweenInfo.new(0.2, Enum.EasingStyle["Quint"], Enum.EasingDirection["Out"]), {Size = UDim2.new(Percentage, 0, 1, 0)}):Play()
-
-						if r.Precise then
-							sliderFrame["Min/Max"].Current.Text = tostring(math.round(Value*100)/100)
-							pcall(r.callback, Value)
-						else
-							local newVal = tostring(math.round(Value))
-							if sliderFrame["Min/Max"].Current.Text ~= newVal then
-								-- print("Changed")
-								sliderFrame["Min/Max"].Current.Text = newVal
-								pcall(r.callback, math.round(Value))
-							end
-						end
-					end
-
-					LPH_JIT(function()
-						game:GetService("RunService").RenderStepped:Connect(function()
-							local Mouse = game:GetService("Players").LocalPlayer:GetMouse()
-
-							if SliderEnabled then
-								local Percentage = math.clamp((Mouse.X - sliderFrame.CanvasGroup.AbsolutePosition.X) / sliderFrame.CanvasGroup.AbsoluteSize.X, 0, 1)
-								local Value = ((r.Max - r.Min) * Percentage) + r.Min
-
-								ReturnValue = r.Precise and math.round(Value*100)/100 or math.round(Value)
-
-								updateSlider(Value, Percentage)
-								r.Set(Value)
-							end
-						end)
-					end)()
-				elseif r.Name == v and r["Tag"] == "Box" then
-					local inputFrame = r.inputFrame:Clone()
-					inputFrame.Parent = ResultElements
-					local UiPadding = elements.SearchStuff.UIPadding:Clone()
-					local SupportFrame = elements.SearchStuff.SupportFrame:Clone()
-					UiPadding.Parent = inputFrame.InputTitle
-					SupportFrame.Parent = inputFrame
-					local Callback = function(newText) 
-						local succ, err = xpcall(function() return r.callback and r.callback(newText) or nil end, function(err) warn("[Error]:", err) end)
-					end
-					
-					inputFrame.TextBox.FocusLost:Connect(function()
-						r.CurrentText = inputFrame.TextBox.Text
-						Callback(r.CurrentText)
-					end)
-				elseif r.Name == v and r["Tag"] == "Dropdown" then
-					local Toggle = false
-					local dropdownFrame = r.dropdownFrame:Clone()
-					dropdownFrame.DropdownTitle.Text = r.Name
-					dropdownFrame.Parent = ResultElements
-					local UiPadding = elements.SearchStuff.UIPadding:Clone()
-					local SupportFrame = elements.SearchStuff.SupportFrame:Clone()
-					UiPadding.Parent = dropdownFrame.DropdownTitle
-					SupportFrame.Parent = dropdownFrame
-					local Callback = function() 
-						local succ, err = xpcall(function() return r.callback and r.callback(r.Selected) or nil end, function(err) warn("[Error]:", err) end)
-					end
-
-					local function Update()
-						if Toggle then
-							dropdownFrame:WaitForChild("DropdownElements").DropdownContent.Visible = true
-							dropdownFrame:WaitForChild("DropdownElements").DropdownContent:TweenSize(r.OldSize, Enum.EasingDirection.InOut, Enum.EasingStyle.Quint, 0.5, true)
-							dropdownFrame.ZIndex = 30
-						else
-							dropdownFrame:WaitForChild("DropdownElements").DropdownContent:TweenSize(UDim2.new(dropdownFrame.DropdownElements.DropdownContent.Size.X.Scale, dropdownFrame.DropdownElements.DropdownContent.Size.X.Offset, 0, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Quint, 0.5, true)
-							task.wait(0.5)			
-							dropdownFrame:WaitForChild("DropdownElements").DropdownContent.Visible = false
-							dropdownFrame.ZIndex = 1
-						end
-					end
-
-					local deactivateButtons = Instance.new("BindableEvent")
-
-					function reUpdate(newDropdowntable)
-						for i,v in pairs(dropdownFrame:WaitForChild("DropdownElements").DropdownContent:GetChildren()) do
-							if v.ClassName == "TextButton" then v:Destroy() end
-						end
-
-						if not table.find(newDropdowntable, r.Selected) then
-							dropdownFrame.DropdownElements.DropdownButton.Text = "Not Selected"
-						end
-
-						for i,v in pairs(newDropdowntable) do
-							local dropdownContentButton = elements.DropdownContentButton:Clone()
-							dropdownContentButton.Text = v or "Unnamed"
-							dropdownContentButton.Parent = dropdownFrame.DropdownElements.DropdownContent
-							if r.Selected == v then
-								dropdownContentButton.BackgroundTransparency = 0
-							else
-								dropdownContentButton.BackgroundTransparency = 1
-							end
-							dropdownContentButton.MouseButton1Down:Connect(function()
-								deactivateButtons:Fire()
-								r.Selected = v
-								dropdownContentButton.BackgroundTransparency = 0
-								dropdownFrame:WaitForChild("DropdownElements").DropdownButton.Text = "Selected: "..v
-								r.dropdownFrame:WaitForChild("DropdownElements").DropdownButton.Text = "Selected: "..v
-								Callback()
-							end)
-							deactivateButtons.Event:Connect(function() 
-								dropdownContentButton.BackgroundTransparency = 1
-							end)
-						end
-
-						r.OldSize = resize(dropdownFrame:WaitForChild("DropdownElements").DropdownContent, false, 3, 0, 210)
-						resize(dropdownFrame:WaitForChild("DropdownElements").DropdownContent, true, 3)
-						Update()
-					end
-
-					dropdownFrame:WaitForChild("DropdownElements").DropdownButton.MouseButton1Down:Connect(function()
-						-- print("hewo")
-						-- print(Toggle)
-						Toggle = not Toggle
-						-- print(Toggle)
-						Update()
-					end)
-
-					reUpdate(r.dropdownList)
-				end
-			end
-		end
-	end
-
-	function Library:Search(query)
-		if query == "" then return end
-		-- print("Querying", query)
-		local result = {}
-		for i, v in pairs(AllElements) do
-			if v.Name:lower():find(query:lower()) and #result < 2 then
-				table.insert(result, v.Name)
-			end
-		end
-		Library:ShowResult(result)
-	end
-
-	local WindowTable = {}
-	
-	function WindowTable:AddTheme(id)
-		local ThemeSelection = elements.ThemeStuff.ThemeSelection:Clone()
-		ThemeSelection.Parent = window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame.Frame
-		ThemeSelection.HoverImage = id
-		ThemeSelection.Image = id
-		ThemeSelection.MouseButton1Up:Connect(function()
-			window.MainFrame.SubFrame.FrameBackgroundImage.Image = id
-		end)
-	end
-	
-	window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame:WaitForChild("TransparencyT"):GetPropertyChangedSignal("Text"):Connect(function()
-        local val = tonumber(window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame.TransparencyT.Text)
-		if val then
-            if val < 0 then val = 0.6 elseif val > 1 then val = 1 else val = 0.6 + (val * 0.4) end
-            -- print(val)
-			window.MainFrame.SubFrame.FrameBackgroundImage.ImageTransparency = val
-		end
-	end)
-
-    window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame:WaitForChild("TransparencyT").Text = "1"
-	
-	function WindowTable:ChangeValues(value1, value2)
-		local Values = window.MainFrame.SubFrame.Values
-		Values["Honey/Hr"].ImageLabel.Value.Text = value1
-		Values.DailyHoney.ImageLabel.Value.Text = value2
-	end
-
-    local function makeTween(obj, time, body)
-        game:GetService("TweenService"):Create(obj,TweenInfo.new(time),body):Play()
-    end
-
-	function WindowTable:Intro()
-		window.MainFrame.Visible = true
-		window.MainFrame.SubFrame.Intro.Visible = true
-		window.MainFrame.DropShadowHolder.Visible = false
-		window.MainFrame.SubFrame.GradientFrame.Visible = false
-		window.MainFrame.Containers.Visible = false
-		window.MainFrame.SubFrame.LinesAndFrames.Visible = false
-		window.MainFrame.SubFrame.Values.Visible = false
-		task.wait(.5)
-        makeTween(window.MainFrame.SubFrame.FrameBackgroundImage, 3.5, {ImageTransparency=0.6})
-        makeTween(window.MainFrame.SubFrame.Intro.MacroText, .3, {TextTransparency=0})
-        makeTween(window.MainFrame.SubFrame.Intro.Logo1, .3, {BackgroundTransparency=0})
-        makeTween(window.MainFrame.SubFrame.Intro.Logo2, .3, {BackgroundTransparency=0})
-        makeTween(window.MainFrame.SubFrame.Intro.Logo3, .3, {BackgroundTransparency=0})
-        makeTween(window.MainFrame, .3, {BackgroundTransparency=0})
-        task.wait(2.5)
-        makeTween(window.MainFrame.SubFrame.Intro.MacroText, .3, {TextTransparency=1})
-        makeTween(window.MainFrame.SubFrame.Intro.Logo1, .3, {BackgroundTransparency=1})
-        makeTween(window.MainFrame.SubFrame.Intro.Logo2, .3, {BackgroundTransparency=1})
-        makeTween(window.MainFrame.SubFrame.Intro.Logo3, .3, {BackgroundTransparency=1})
-        makeTween(window.MainFrame, .3, {BackgroundTransparency=0})
+    local UIFolder = game:GetObjects("rbxassetid://14359186471")[1]
+    local SmoothScroll = loadstring(game:HttpGet"https://raw.githubusercontent.com/7BioHazard/mv3/main/smoothscroll.lua")() --loadstring(UIFolder.SmoothScroll.Source)()
+    local UI = {}
+    
+    -- function fixScrolling(scrollingFrame)
+    --     if not SmoothScroll then warn("Can't fix scrolling, try another executor. (It's not that important)") return end
+    --     SmoothScroll.Enable(scrollingFrame, 17, 0.7)
+    -- end
+    
+    function dragify(Frame)
+        local dragToggle = nil
+        local dragSpeed = 0.8
+        local dragInput = nil
+        local dragStart = nil
+        local dragPos = nil
+        local startPos = nil
+        local function updateInput(input)
+            local Delta = input.Position - dragStart
+            local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+            TweenService:Create(Frame, TweenInfo.new(dragSpeed/10), {Position = Position}):Play()
+        end
+        local dragableElements = {Frame["_"].TopBar, Frame["_"].LowerRightFrame, Frame["_"].LowerLeftFrame, Frame["_"].LeftFrame}
+        for _,frame in pairs(dragableElements) do
+            frame.InputBegan:Connect(function(input)
+                if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UserInputService:GetFocusedTextBox() == nil then
+                    dragToggle = true
+                    dragStart = input.Position
+                    startPos = Frame.Position
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            dragToggle = false
+                        end
+                    end)
+                end
+            end)
+            frame.InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                    dragInput = input
+                end
+            end)
+        end
         
-        task.spawn(function() 
-            task.wait(1)
-            window.MainFrame.SubFrame.Intro.Visible = false
-            window.MainFrame.DropShadowHolder.Visible = true
-            window.MainFrame.SubFrame.GradientFrame.Visible = true
-            window.MainFrame.Containers.Visible = true
-            window.MainFrame.SubFrame.LinesAndFrames.Visible = true
-            window.MainFrame.SubFrame.Values.Visible = true
-            window.MainFrame.SubFrame.LinesAndFrames.ThemeFrame:WaitForChild("TransparencyT").Text = "0"
+        UserInputService.InputChanged:Connect(function(input)
+            if input == dragInput and dragToggle then
+                updateInput(input)
+            end
         end)
-	end
-
-	function WindowTable:Tab(tabName)
-		local tabName = tabName or "Unnamed"
-		local TabTable = {}
-
-		local tabButton = elements.TabButton:Clone()
-		tabButton.Name = tabName.."Button"
-		tabButton.TextLabel.Text = tabName
-		tabButton.Parent = window.MainFrame.TabList
-
-		resize(window.MainFrame.TabList, true, 1)
-
-		local tabContainer = elements.TabContainer:Clone()
-		tabContainer.Name = tabName.."Container"
-		tabContainer.Parent = window.MainFrame.Containers
-
-		function TabTable:Enable()
-			if Library.SelectedTab then
-				Library.SelectedTab:Disable()
-			end
-			Library.SelectedTab = TabTable
-			tabContainer.Visible = true
-			tabButton.BackgroundTransparency = 0
-		end
-
-		function TabTable:Disable()
-			if Library.SelectedTab == TabTable then
-				Library.SelectedTab = nil
-				tabContainer.Visible = false
-				tabButton.BackgroundTransparency = 1
-			end
-		end
-
-		if Library.SelectedTab == nil then
-			TabTable:Enable()
-		end
-
-		tabButton.MouseButton1Down:Connect(function()
-			TabTable:Enable()
-		end)
-
-		function TabTable:Category(categoryName)
-			local categoryName = categoryName or "Unnamed"
-
-			local categoryFrame = elements.Category:Clone()
-			categoryFrame.Name = categoryName.."Category"
-			categoryFrame.CantegoryName.Text = categoryName
-			categoryFrame.Parent = tabContainer
-
-			resize(tabContainer, true, 1)
-		end
-
-		function TabTable:Button(buttonText, callback)
-			local buttonText = buttonText or "Button"
-            local btnName = buttonText.."_"..getElementsCount(buttonText)
-			AllElements[btnName] = {Tag = "Button", Name = buttonText}
-			AllElements[btnName].Hover = false
-
-			AllElements[btnName].buttonFrame = elements.Button:Clone()
-			AllElements[btnName].buttonFrame.ButtonText.Text = buttonText
-			AllElements[btnName].buttonFrame.Parent = tabContainer
-			UIS.InputBegan:Connect(function(inputType, GPEV)
-				if inputType.UserInputType == Enum.UserInputType.MouseButton1 and AllElements[btnName].Hover then
-					local succ, err = xpcall(callback, function(err) warn("[Error]:", err) end)
-					--game:GetService("TweenService"):Create(buttonFrame.ButtonInstance, TweenInfo.new(.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
-					--game:GetService("TweenService"):Create(buttonFrame.ButtonInstance, TweenInfo.new(.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(16, 16, 16)}):Play()
-				end
-			end)
-			AllElements[btnName].buttonFrame.MouseEnter:Connect(function()
-				AllElements[btnName].Hover = true
-				-- print(AllElements[btnName].Hover)
-			end)
-
-			AllElements[btnName].buttonFrame.MouseLeave:Connect(function()
-				AllElements[btnName].Hover = false
-				-- print(AllElements[btnName].Hover)
-			end)
-
-			resize(tabContainer, true, 1)
-		end
-
-		function TabTable:Toggle(toggleText, callback)
-			local toggleText = toggleText or "Unnamed"
-
-            local toggleName = toggleText.."_"..getElementsCount(toggleText)
-
-			AllElements[toggleName] = {Tag = "Toggle", State = false, Name = toggleText}
-
-			AllElements[toggleName].toggleFrame = elements.Toggle:Clone()
-			AllElements[toggleName].toggleFrame.ToggleText.Text = toggleText
-			AllElements[toggleName].toggleFrame.Parent = tabContainer
-			AllElements[toggleName]["Callback"] = callback
-
-			local Callback = function() 
-				local succ, err = xpcall(function() return callback and callback(AllElements[toggleName].State) or nil end, function(err) warn("[Error]:", err) end)
-			end
-			AllElements[toggleName].Update = function() 
-				if AllElements[toggleName].State == true then
-					game:GetService("TweenService"):Create(AllElements[toggleName].toggleFrame.ToggleButton, TweenInfo.new(.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
-				else
-					game:GetService("TweenService"):Create(AllElements[toggleName].toggleFrame.ToggleButton, TweenInfo.new(.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
-				end
-			end
-
-			AllElements[toggleName].Set = function(state)
-				if state == true or state == false then
-					AllElements[toggleName].State = state
-					AllElements[toggleName].Update()
-					Callback()
-				end
-			end
-
-			AllElements[toggleName].toggleFrame.ToggleButton.MouseButton1Down:Connect(function()
-				AllElements[toggleName].State = not AllElements[toggleName].State
-				AllElements[toggleName].Update()
-				Callback()
-			end)
-
-			resize(tabContainer, true, 1)
-
-			return AllElements[toggleName]
-		end
-
-		function TabTable:Dropdown(dropdownText, dropdownList, callback)
-			local dropdownText = dropdownText or "Unnamed"
-			local dropdownList = dropdownList or {}
-
-            local ddownName = dropdownText.."_"..getElementsCount(dropdownText)
-			AllElements[ddownName] = {Tag = "Dropdown", dropdownList = dropdownList, callback = callback, Selected = nil, Toggle = false, Name = dropdownText}
-
-			AllElements[ddownName].dropdownFrame = elements.Dropdown:Clone()
-			AllElements[ddownName].dropdownFrame.DropdownTitle.Text = dropdownText
-			AllElements[ddownName].dropdownFrame.Parent = tabContainer
-
-			local Callback = function() 
-				local succ, err = xpcall(function() return callback and callback(AllElements[ddownName].Selected) or nil end, function(err) warn("[Error]:", err) end)
-			end
-
-			local function Update()
-				if AllElements[ddownName].Toggle then
-					AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent.Visible = true
-					AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent:TweenSize(AllElements[ddownName].OldSize, Enum.EasingDirection.InOut, Enum.EasingStyle.Quint, 0.2, true)
-					AllElements[ddownName].dropdownFrame.ZIndex = 30
-				else
-					AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent:TweenSize(UDim2.new(AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent.Size.X.Scale, AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent.Size.X.Offset, 0, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Quint, 0.2, true)
-					task.wait(0.2)			
-					AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent.Visible = false
-					AllElements[ddownName].dropdownFrame.ZIndex = 1
-				end
-			end
-
-			local deactivateButtons = Instance.new("BindableEvent")
-
-			AllElements[ddownName].Update = function(newDropdowntable)
-				for i,v in pairs(AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent:GetChildren()) do
-					if v.ClassName == "TextButton" then v:Destroy() end
-				end
-
-				if not table.find(newDropdowntable, AllElements[ddownName].Selected) then
-					AllElements[ddownName].dropdownFrame.DropdownElements.DropdownButton.Text = "Not Selected" 
-				end
-               
-				for i,v in pairs(newDropdowntable) do
-					local dropdownContentButton = elements.DropdownContentButton:Clone()
-					dropdownContentButton.Text = tostring(v) or "Unnamed"
-					dropdownContentButton.Parent = AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent
-					if AllElements[ddownName].Selected == v then
-						dropdownContentButton.BackgroundTransparency = 0
-					else
-						dropdownContentButton.BackgroundTransparency = 1
-					end
-					dropdownContentButton.MouseButton1Down:Connect(function()
-						deactivateButtons:Fire()
-						AllElements[ddownName].Selected = v
-						dropdownContentButton.BackgroundTransparency = 0
-						AllElements[ddownName].dropdownFrame.DropdownElements.DropdownButton.Text = "Selected: "..v
-						Callback()
-					end)
-					deactivateButtons.Event:Connect(function() 
-						dropdownContentButton.BackgroundTransparency = 1
-					end)
-				end
-				AllElements[ddownName].OldSize = resize(AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent, false, 3, 0, 210)
-				resize(AllElements[ddownName].dropdownFrame.DropdownElements.DropdownContent, true, 3)
-				Update()
-			end
-
-			AllElements[ddownName].Set = function(to)
-				if to == nil then return end
-				if table.find(AllElements[ddownName].dropdownList, to) then
-					AllElements[ddownName].Selected = to
-					AllElements[ddownName].dropdownFrame.DropdownElements.DropdownButton.Text = "Selected: "..AllElements[ddownName].Selected
-					Callback(to)
-				end
-			end
-
-			AllElements[ddownName].dropdownFrame.DropdownElements.DropdownButton.MouseButton1Down:Connect(function()
-				AllElements[ddownName].Toggle = not AllElements[ddownName].Toggle
-				Update()
-			end)
-
-            coroutine.wrap(function() 
-                AllElements[ddownName].Update(dropdownList)
-            end)()
-
-			return AllElements[ddownName]
-		end
-
-		function TabTable:Label(labelText)
-			local labelText = labelText or "Label"
-
-			local LabelTable = {Tag = "Label"}
-
-			local labelFrame = elements.Label:Clone()
-			labelFrame.LabelText.Text = labelText
-			labelFrame.Parent = tabContainer
-
-			function LabelTable.Set(newLabelText)
-				local newLabelText = newLabelText or labelFrame.LabelText.Text
-				labelFrame.LabelText.Text = newLabelText
-			end
-
-            function LabelTable.Get()
-				return labelFrame.LabelText.Text
-			end
-
-			return LabelTable
-		end
-
-		function TabTable:Input(inputText, placeholder, callback)
-			local inputText = inputText or "Label"
-
-            local inptName = inputText.."_"..getElementsCount(inputText)
-
-			AllElements[inptName] = {Tag = "Box", CurrentText = nil, Name = inputText, callback = callback}
-
-			AllElements[inptName].inputFrame = elements.Input:Clone()
-			AllElements[inptName].inputFrame.InputTitle.Text = inputText
-			AllElements[inptName].CurrentText = inputText
-			AllElements[inptName].inputFrame.Parent = tabContainer
-
-			local Callback = function(newText) 
-				local succ, err = xpcall(function() return callback and callback(newText) or nil end, function(err) warn("[Error]:", err) end)
-                --callback(newText)
-			end
-
-			AllElements[inptName].inputFrame.TextBox.FocusLost:Connect(function()
-				AllElements[inptName].CurrentText = AllElements[inptName].inputFrame.TextBox.Text
-				Callback(AllElements[inptName].CurrentText)
-			end)
-
-			return AllElements[inptName]
-		end
-
-		function TabTable:Slider(sliderText, callback, options)
-			local sliderText = sliderText or "Unnamed"
-			local Min = options.Min or 0
-			local Max = options.Max or 1
-			local Default = tonumber(options.Default) or 0
-			local Precise = options.Precise or false
-
-			if Default >= Max then 
-				Default = Max 
-			elseif Default <= Min then 
-				Default = Min 
-			end
-
-            local sliderName
-            if sliderText:find("Harvest") then
-                local tempText = string.gsub(sliderText, " %%", "")
-                -- warn(tempText)
-                sliderName = tempText.."_"..getElementsCount(tempText)
-                -- warn(sliderName)
+    end
+    
+    function UI:Make(WindowName)
+        local SearchbarTable = {Toggle = false, Hover = false, ThemeEnabled = false}
+        --warn(WindowName)
+        local globalSelf = {
+            Tabs = {},
+            TabsCount = 0
+        }
+        globalSelf.MacroUI = UIFolder.UI:Clone()
+        globalSelf.MacroUI.MainFrame["_"].TopBar.Logo.MacroV3.Text = "NiggerV3"
+        local profileFrame = globalSelf.MacroUI.MainFrame["_"].LowerLeftFrame.Profile
+        coroutine.wrap(function() 
+            for i=1,3 do game:GetService("ContentProvider"):PreloadAsync({string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=420&h=420", i)}) end 
+        end)()
+        function globalSelf:ChangeAnonymousState(state)
+            if not state then
+                profileFrame.PName.Text = game.Players.LocalPlayer.Name
+                profileFrame.Avatar.Image = string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=420&h=420", game.Players.LocalPlayer.UserId)
             else
-                sliderName = sliderText.."_"..getElementsCount(sliderText)
+                profileFrame.PName.Text = "Anonymous"
+                profileFrame.Avatar.Image = string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=420&h=420", math.random(1,3))
             end
+        end
 
-			AllElements[sliderName] = {Tag = "Slider", Name = sliderText, Min = Min, Max = Max, Default = Default, Precise = Precise}
-			local SliderEnabled = false
+        globalSelf:ChangeAnonymousState(false)
 
-			AllElements[sliderName].sliderFrame = elements.Slider:Clone()
-			AllElements[sliderName].sliderFrame.SliderText.Text = sliderText
-			AllElements[sliderName].sliderFrame["Min/Max"].Min.Text = tostring(Min)
-			AllElements[sliderName].sliderFrame["Min/Max"].Max.Text = tostring(Max)
+        globalSelf.MacroUI.Name = "MV3"
+        globalSelf.MacroUI.ResetOnSpawn = false
+        
+        local UIElements = UIFolder.UIElements
+        local AllElements = {}
+        
+        dragify(globalSelf.MacroUI.MainFrame)
+        
+        globalSelf.MacroUI.MainFrame.FrameBackgroundImage.Image = getcustomasset("ihwfb79hwfuiwef.png")
+        globalSelf.MacroUI.MainFrame.FrameBackgroundImage.BackgroundTransparency = 1
+        globalSelf.MacroUI.MainFrame.FrameBackgroundImage.ImageColor3 = Color3.fromRGB(88, 88, 88)
+        globalSelf.MacroUI.MainFrame.FrameBackgroundImage.Visible = true
 
-			AllElements[sliderName].sliderFrame.Parent = tabContainer
-
-			AllElements[sliderName].sliderFrame.SliderButton.MouseButton1Down:Connect(function()
-				SliderEnabled = true
-			end)
-
-			game:GetService("UserInputService").InputEnded:Connect(function(Input)
-				if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-					SliderEnabled = false
-				end
-			end)
-
-			local ReturnValue = Default or 0
-
-			local function updateSlider(Value, Percentage)
-				game:GetService("TweenService"):Create(AllElements[sliderName].sliderFrame.CanvasGroup.Fill, TweenInfo.new(0.2, Enum.EasingStyle["Quint"], Enum.EasingDirection["Out"]), {Size = UDim2.new(Percentage, 0, 1, 0)}):Play()
-
-				if Precise then
-					AllElements[sliderName].sliderFrame["Min/Max"].Current.Text = tostring(math.round(Value*100)/100)
-					xpcall(callback, function(err) warn("[Error]:", err) end, Value)
-				else
-					local newVal = tostring(math.round(Value))
-					if AllElements[sliderName].sliderFrame["Min/Max"].Current.Text ~= newVal then
-						-- print("Changed")
-						AllElements[sliderName].sliderFrame["Min/Max"].Current.Text = newVal
-						xpcall(callback, function(err) warn("[Error]:", err) end, math.round(Value))
-					end
-				end
-			end
-
-			LPH_JIT(function()
-				game:GetService("RunService").RenderStepped:Connect(function()
-					local Mouse = game:GetService("Players").LocalPlayer:GetMouse()
-
-					if SliderEnabled then
-						local Percentage = math.clamp((Mouse.X - AllElements[sliderName].sliderFrame.CanvasGroup.AbsolutePosition.X) / AllElements[sliderName].sliderFrame.CanvasGroup.AbsoluteSize.X, 0, 1)
-						local Value = ((Max - Min) * Percentage) + Min
-
-						ReturnValue = Precise and math.round(Value*100)/100 or math.round(Value)
-
-						updateSlider(Value, Percentage)
-					end
-				end)
-			end)()
-
-			AllElements[sliderName].Get = function()
-				return ReturnValue
-			end
-
-			AllElements[sliderName].Set = function(Value)
-				if Value == nil then
-					Value = Min
-				end
-				if Value >= Max then 
-					Value = Max
-				elseif Value <= Min then
-					Value = Min
-				end
-
-				local Percentage = math.clamp((Value - Min) / (Max - Min), 0, 1)
-				local Value = ((Max - Min) * Percentage) + Min
-
-				ReturnValue = Precise and math.round(Value*100)/100 or math.round(Value)
-
-                updateSlider(Value, Percentage)
-			end
-
-            AllElements[sliderName].Set(Default)
-
-            if tonumber(options.ExtraPixels) then
-                resize(tabContainer, true, 1, tonumber(options.ExtraPixels), 1770)
+        UserInputService.InputBegan:Connect(function(input) 
+            if input.KeyCode == Enum.KeyCode.Semicolon then
+                globalSelf.MacroUI.Enabled = not globalSelf.MacroUI.Enabled
             end
+        end)
 
-			return AllElements[sliderName]
-		end
-		return TabTable
-	end
+        if gethui then
+            if gethui():FindFirstChild("MV3") then gethui().MV3:Destroy() end
+            globalSelf.MacroUI.Parent = gethui()
+        elseif not game:IsStudio() then
+            if game.CoreGui:FindFirstChild("MV3") then game.CoreGui.MV3:Destroy() end
+            globalSelf.MacroUI.Parent = game.CoreGui
+        else
+            if game.Players.LocalPlayer.PlayerGui:FindFirstChild("MV3") then game.Players.LocalPlayer.PlayerGui.MV3:Destroy() end
+            globalSelf.MacroUI.Parent = game.Players.LocalPlayer.PlayerGui
+        end
 
-	return WindowTable
-end
-
-library = Library
+        -- globalSelf.MacroUI.Parent = game.Players.LocalPlayer.PlayerGui
+        
+        local function getElementsCount(Name)
+            local count = 0
+            for i,_ in pairs(AllElements) do
+                if i:find(Name) then count = count + 1 end
+            end
+            return count
+        end
+    
+        function globalSelf:UpdateInformations(hourlyHoney, dailyHoney, uptimeString)
+            local LowerRightFrame
+            pcall(function() LowerRightFrame = self.MacroUI.MainFrame["_"].LowerRightFrame end)
+            if not LowerRightFrame then return end
+            LowerRightFrame.HourlyHoney.Value.Text = hourlyHoney
+            LowerRightFrame.DailyHoney.Value.Text = dailyHoney
+        end
+        
+        function globalSelf:Tab(tabName)
+            self.TabsCount += 1
+            local TabData = {_ID = self.TabsCount, Active = false}
+            
+            TabData["_TabButton"] = UIElements.TabButton:Clone()
+            TabData["_TabButton"].Parent = self.MacroUI.MainFrame["_"].LeftFrame.TabList
+            TabData["_TabButton"].Title.Text = tabName
+            TabData["_TabButton"].Visible = true
+            
+            TabData["_TabContainer"] = UIElements.TabContainer:Clone()
+            TabData["_TabContainer"].Parent = self.MacroUI.MainFrame["_"].Containers
+            TabData["_TabContainer"].TabTitle.Text = tabName
+            -- fixScrolling(TabData["_TabContainer"].Container)
+            
+            TabData["_TabContainer"].Container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                TabData["_TabContainer"].Container.CanvasSize = UDim2.new(0, 0, 0, 
+                    TabData["_TabContainer"].Container.UIListLayout.AbsoluteContentSize.Y + TabData["_TabContainer"].Container.UIListLayout.Padding.Offset * (#TabData["_TabContainer"].Container:GetChildren() - 1))
+            end)
+            
+            function TabData:toggleSelection(state)
+                if state then
+                    TweenService:Create(self["_TabButton"], TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(43, 43, 43)}):Play()
+                else
+                    TweenService:Create(self["_TabButton"], TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(0,0,0)}):Play()
+                end
+            end
+            
+            function TabData:SetActive()
+                for _,tabData in pairs(globalSelf.Tabs) do
+                    if tabData._ID == self._ID then
+                        TweenService:Create(TabData["_TabButton"].LeftActiveFill, TweenInfo.new(0.1), {Size = UDim2.new(0, 8, 1, 0)}):Play()
+                        TabData["_TabContainer"].Visible = true
+                        self.Active = true
+                        self:toggleSelection(true)
+                    else
+                        TweenService:Create(tabData["_TabButton"].LeftActiveFill, TweenInfo.new(0.1), {Size = UDim2.new(0, 0, 1, 0)}):Play()
+                        tabData["_TabContainer"].Visible = false
+                        tabData.Active = false
+                        tabData:toggleSelection(false)
+                    end
+                end
+            end
+            
+            table.insert(self.Tabs, TabData)
+            
+            if self.TabsCount <= 1 then
+                TabData:SetActive()
+            end
+            
+            TabData["_TabButton"].MouseEnter:Connect(function() 
+                TabData:toggleSelection(true)
+            end)
+            TabData["_TabButton"].MouseLeave:Connect(function()
+                if not TabData.Active then
+                    TabData:toggleSelection(false)
+                end	
+            end)
+            
+            TabData["_TabButton"].MouseButton1Down:Connect(function() 
+                if not TabData.Active then 
+                    TabData:SetActive()
+                end
+            end)
+            
+            function TabData:Label(Name)
+                Name = Name or "Label"
+                local Label = {Tag = "Label"}
+                Label.Frame = UIElements.Label:Clone()
+    
+                Label.Frame.Parent = self["_TabContainer"].Container
+                Label.Frame.TextLabel.Text = Name
+                Label.Frame.Visible = true
+    
+                function Label:Set(newText)
+                    if not tostring(newText) then return end
+                    pcall(function() self.Frame.TextLabel.Text = tostring(newText) end)
+                end
+    
+                return Label
+            end
+            
+            function TabData:Button(Name, ButtonText, Callback)
+                Name = Name or "Button"
+                local elName = Name.."_"..getElementsCount(Name)
+                AllElements[elName] = {Tag = "Button", Name = Name}
+                AllElements[elName].Frame = UIElements.Button:Clone()
+                
+                AllElements[elName].Frame.Parent = self["_TabContainer"].Container
+    
+                AllElements[elName].Frame.TextLabel.Text = Name
+                AllElements[elName].Frame.TextButton.Text = ButtonText or ""
+                AllElements[elName].Frame.Visible = true
+                
+                AllElements[elName].Frame.TextButton.MouseButton1Click:Connect(function() 
+                    xpcall(Callback, function(err) warn("[Error-1]:",err) end)
+                end)
+            end
+            
+            function TabData:Toggle(Name, callback)
+                Name = Name or "Toggle"
+                local elName = Name.."_"..getElementsCount(Name)
+                AllElements[elName] = {Tag = "Toggle", Name = Name, State = false}
+                local toggleTable = AllElements[elName]
+                
+                toggleTable.Frame = UIElements.Toggle:Clone()
+                toggleTable.Frame.TextLabel.Text = Name
+                toggleTable.Frame.Parent = self["_TabContainer"].Container
+                toggleTable.Frame.Visible = true
+                
+                local Callback = function()
+                    xpcall(function() callback(AllElements[elName].State) end, function(err) warn("[Error-2]:",err) end)
+                end
+                
+                function toggleTable:Update()
+                    if self.State == true then
+                        TweenService:Create(self.Frame.ToggleButton, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
+                    else
+                        TweenService:Create(self.Frame.ToggleButton, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
+                    end
+                end
+                
+                function toggleTable:Set(state)
+                    state = (state == true and true) or (state == false and false) or false
+                    pcall(function() 
+                        self.State = state
+                        self:Update()
+                        Callback()
+                    end)
+                    
+                end
+                
+                toggleTable.Frame.ToggleButton.MouseButton1Down:Connect(function()
+                    toggleTable.State = not toggleTable.State
+                    toggleTable:Update()
+                    Callback()
+                end)
+                
+                return toggleTable
+            end
+            
+            function TabData:Input(Name, placeholder, callback)
+                Name = Name or "Input"
+                local elName = Name.."_"..getElementsCount(Name)
+                AllElements[elName] = {Tag = "Box", Name = Name, CurrentText = ""}
+                AllElements[elName].Frame = UIElements.Input:Clone()
+                AllElements[elName].Frame.TextLabel.Text = Name
+                AllElements[elName].Frame.TextBox.PlaceholderText = placeholder or ""
+                AllElements[elName].Frame.Parent = self["_TabContainer"].Container
+                AllElements[elName].Frame.Visible = true
+                
+                local Callback = function(newText) 
+                    xpcall(function() callback(newText) end, function(err) warn("[Error-3]:",err) end)
+                end
+                
+                AllElements[elName].Frame.TextBox.FocusLost:Connect(function()
+                    AllElements[elName].CurrentText = AllElements[elName].Frame.TextBox.Text
+                    Callback(AllElements[elName].CurrentText)
+                end)
+            end
+            
+            function TabData:Slider(Name, callback, options)
+                -- print(Name)
+                Name = Name or "Slider"
+                options = options or {}
+                
+                local Min,Max = options.Min or 0, options.Max or 1
+                local Default,Precise = tonumber(options.Default) or 0, options.Precise or false
+                
+                if Default >= Max then 
+                    Default = Max 
+                elseif Default <= Min then 
+                    Default = Min 
+                end
+                
+                local elName
+                local tempText = string.gsub(Name, " %%", "")
+                elName = tempText.."_"..getElementsCount(tempText)
+                
+                AllElements[elName] = {Tag = "Slider", Name = Name, Min = Min, Max = Max, Default = Default, Precise = Precise, CurrentValue = Default or 0}
+                local SliderTable = AllElements[elName]
+                
+                SliderTable.Frame = UIElements.Slider:Clone()
+                SliderTable.Frame.TextLabel.Text = Name
+                SliderTable.Frame.CurrentValue.Text = tostring(Default)
+                SliderTable.Frame.Parent = self["_TabContainer"].Container
+                SliderTable.Frame.Visible = true
+                
+                local sliderListen = nil
+                
+                local function updateSlider(Value, Percentage)
+                    TweenService:Create(SliderTable.Frame.CanvasGroup.Fill, TweenInfo.new(0.2, Enum.EasingStyle["Quint"], Enum.EasingDirection["Out"]), {Size = UDim2.new(Percentage, 0, 1, 0)}):Play()
+    
+                    if Precise then
+                        SliderTable.Frame.CurrentValue.Text = tostring(math.round(Value*100)/100)
+                        xpcall(callback, function(err) warn("[Error-4]:", err) end, Value)
+                    else
+                        local newVal = tostring(math.round(Value))
+                        if SliderTable.Frame.CurrentValue.Text ~= newVal then
+                            -- print("Changed")
+                            SliderTable.Frame.CurrentValue.Text = newVal
+                            xpcall(callback, function(err) warn("[Error-4]:", err) end, math.round(Value))
+                        end
+                    end
+                end
+                
+                SliderTable.Frame.SliderButton.MouseButton1Down:Connect(function()
+                    sliderListen = RunService.RenderStepped:Connect(function()
+                        local Mouse = Players.LocalPlayer:GetMouse()
+                        local Percentage = math.clamp((Mouse.X - SliderTable.Frame.CanvasGroup.AbsolutePosition.X) / SliderTable.Frame.CanvasGroup.AbsoluteSize.X, 0, 1)
+                        local Value = ((Max - Min) * Percentage) + Min
+    
+                        SliderTable.CurrentValue = Precise and math.round(Value*100)/100 or math.round(Value)
+    
+                        updateSlider(Value, Percentage)
+                    end)
+                end)
+                
+                UserInputService.InputEnded:Connect(function(Input)
+                    if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        if sliderListen ~= nil then sliderListen:Disconnect() sliderListen = nil end
+                    end
+                end)
+                
+                function SliderTable:Set(newValue)
+                    if newValue == nil or not tonumber(newValue) then
+                        newValue = Min
+                    end
+                    
+                    if newValue >= Max then 
+                        newValue = Max
+                    elseif newValue <= Min then
+                        newValue = Min
+                    end
+                    
+                    local Percentage = math.clamp((newValue - Min) / (Max - Min), 0, 1)
+                    local newValue = ((Max - Min) * Percentage) + Min
+                    
+                    self.CurrentValue = Precise and math.round(newValue*100)/100 or math.round(newValue)
+                    updateSlider(newValue, Percentage)
+                end
+                
+                function SliderTable:Get()
+                    return self.CurrentValue
+                end
+                
+                SliderTable:Set(Default)
+                
+                return SliderTable
+            end
+            
+            function TabData:Category(Name, withotSpacing)
+                Name = Name or "New Category"
+                local Category = UIElements.Category:Clone()
+                Category.TextLabel.Text = Name
+                Category.Visible = true
+                if not withotSpacing then Category.Size = UDim2.new(0.95,0,0,35) else Category.Size = UDim2.new(0.95,0,0,22) end
+                Category.Parent = self["_TabContainer"].Container
+                    
+                return self
+            end
+            
+            function TabData:Dropdown(Name, Options, Callbacks) -- Options: ["Default", "Removable", "Multi"]
+                Name = Name or "New Dropdown"
+                Options = Options or {}
+                Options.Type = Options.Type or "Default"
+                local elName = Name.."_"..getElementsCount(Name)
+                AllElements[elName] = {Tag = "Dropdown", Name = Name}
+                local Dropdown = AllElements[elName]
+                
+                Dropdown.Data = Options.Options
+                Dropdown.CurrentData = {}
+                Dropdown.Selected = {}
+                Dropdown.dropdownActive = false
+                
+                Dropdown.Frame = UIElements.Dropdown:Clone()
+                local DropdownFrame = Dropdown.Frame
+                DropdownFrame.TextLabel.Text = Name
+                DropdownFrame.Visible = true
+                DropdownFrame.Parent = self["_TabContainer"].Container
+                
+                -- fixScrolling(DropdownFrame.DropdownContainer)			
+    
+                DropdownFrame.DropdownContainer.UIListLayout.Padding = UDim.new(0,2)
+                DropdownFrame.DropdownContainer.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    DropdownFrame["DropdownContainer"].CanvasSize = UDim2.new(0, 0, 0, 
+                        DropdownFrame.DropdownContainer.UIListLayout.AbsoluteContentSize.Y + DropdownFrame.DropdownContainer.UIListLayout.Padding.Offset * (#DropdownFrame.DropdownContainer:GetChildren() - 1))
+                end)
+                
+                local DDX = DropdownFrame.Size.X
+                local DDY = DropdownFrame.Size.Y
+                
+                DropdownFrame["DropdownInteractable"].MouseButton1Click:Connect(function()
+                    Dropdown.dropdownActive = not Dropdown.dropdownActive
+    
+                    if Dropdown.dropdownActive then
+                        TweenService:Create(DropdownFrame, TweenInfo.new(0.2, Enum.EasingStyle["Quint"], Enum.EasingDirection["Out"]), {Size = UDim2.new(DDX.Scale, DDX.Offset, 0, 122)}):Play()
+                    elseif not Dropdown.dropdownActive then
+                        TweenService:Create(DropdownFrame, TweenInfo.new(0.2, Enum.EasingStyle["Quint"], Enum.EasingDirection["Out"]), {Size = UDim2.new(DDX.Scale, DDX.Offset, 0, 22)}):Play()
+                    end
+                end)
+                
+                
+                
+                if Options.Type == "Removable" then
+                    Dropdown["_UpdateElements"] = function()
+                        for _,Button in pairs(DropdownFrame["DropdownContainer"]:GetChildren()) do
+                            if not Button:IsA("TextButton") then continue end
+                            if not table.find(AllElements[elName].CurrentData, Button.Text) then
+                                -- print(Button.Text,"removed\n")
+                                Button:Destroy()
+                            end
+                        end
+                    end
+                    Dropdown["_SelectOption"] = function(option) 
+                        local index = table.find(AllElements[elName].CurrentData, option)
+                        
+                        if index then 
+                            table.remove(AllElements[elName].CurrentData, index)
+                            --warn(1)
+                            AllElements[elName]["_UpdateElements"]()
+                            pcall(Callbacks["onRemove"], option)
+                        end
+                    end
+                    
+                elseif Options.Type == "Multi" then
+                    Dropdown["_UpdateElements"] = function()
+                        for _,Button in pairs(DropdownFrame["DropdownContainer"]:GetChildren()) do
+                            if not Button:IsA("TextButton") then continue end
+                            if table.find(AllElements[elName].Selected, Button.Text) then
+                                Button.BackgroundTransparency = 0
+                            else
+                                Button.BackgroundTransparency = 1
+                            end
+                        end
+                    end
+                    Dropdown["_SelectOption"] = function(option)
+                        local isSelected = table.find(AllElements[elName].Selected, option)
+                        if isSelected then
+                            table.remove(AllElements[elName].Selected, isSelected)
+                            AllElements[elName]["_UpdateElements"]()
+                            pcall(Callbacks["onDeselect"], option)
+                        else
+                            table.insert(AllElements[elName].Selected, option)
+                            AllElements[elName]["_UpdateElements"]()
+                            pcall(Callbacks["onSelect"], option)
+                        end
+                    end
+                    
+                else
+                    Dropdown["_UpdateElements"] = function()
+                        for _,Button in pairs(DropdownFrame["DropdownContainer"]:GetChildren()) do
+                            if not Button:IsA("TextButton") then continue end
+                            if table.find(AllElements[elName].Selected, Button.Text) then
+                                Button.BackgroundColor3 = Color3.fromRGB(62, 69, 136)
+                                Button.BackgroundTransparency = 0
+                            else
+                                Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                                Button.BackgroundTransparency = 0.95
+                            end
+                        end
+                    end
+                    Dropdown["_SelectOption"] = function(option) 
+                        AllElements[elName].Selected[1] = option
+                        DropdownFrame.Selected.Text = option
+                        AllElements[elName]["_UpdateElements"]()
+                        AllElements[elName].dropdownActive = false
+                        TweenService:Create(DropdownFrame, TweenInfo.new(0.2, Enum.EasingStyle["Quint"], Enum.EasingDirection["Out"]), {Size = UDim2.new(DDX.Scale, DDX.Offset, 0, 22)}):Play()
+                        pcall(Callbacks["onSelect"], option)
+                    end
+                end
+                
+                local function Setup(Data)
+                    for _, Value in pairs(Data) do
+                        local Button = Instance.new("TextButton", DropdownFrame["DropdownContainer"])
+                        Button.BackgroundTransparency = 1
+                        Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                        Button.BorderSizePixel = 0.95
+                        Button.Font = Enum.Font["Gotham"]
+                        Button.AutoButtonColor = false
+                        Button.Name = "DropdownOption"
+                        Button.Size = UDim2.new(0.8, 0, 0, 20)
+                        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        Button.TextSize = 13
+                        local UICorner = Instance.new("UICorner", Button)
+                        UICorner.CornerRadius = UDim.new(0,5)
+    
+                        if type(Value) == "userdata" then
+                            Button.Text = Value.Name
+                        else
+                            Button.Text = tostring(Value)
+                        end
+    
+                        Button.MouseButton1Down:Connect(function()
+                            Dropdown["_SelectOption"](Value)
+                        end)
+                    end
+                end
+                
+                local function Clear()
+                    for _, Button in ipairs(DropdownFrame["DropdownContainer"]:GetChildren()) do
+                        if Button:IsA("TextButton") and Button.Name == "DropdownOption" then
+                            Button:Destroy()
+                        end
+                    end
+                end
+    
+                for _, DataValue in ipairs(Dropdown.Data) do
+                    table.insert(Dropdown.CurrentData, DataValue)
+                end
+                
+                Setup(Dropdown.CurrentData)
+                
+                function Dropdown:Get()
+                    return self.Selected
+                end
+                
+                function Dropdown:Select(Value)
+                    Dropdown["_SelectOption"](Value)
+                end
+                
+                function Dropdown:Update(newData)
+                    if type(newData) ~= "table" then
+                        newData = {newData}
+                    end
+                    
+                    table.clear(self.CurrentData)
+                    Clear()
+                    for _, DataValue in ipairs(newData) do
+                        table.insert(self.CurrentData, DataValue)
+                    end
+                    
+                    Setup(self.CurrentData)
+                    self["_UpdateElements"]()
+                end
+                
+                return Dropdown
+            end
+            
+            return TabData
+        end
+    
+        return globalSelf
+    end
+    
+    library = UI    
 end
 
 do
@@ -1000,7 +772,7 @@ do
         if identifyexecutor and tostring(identifyexecutor()):match("Electron") then return true end
     end
     mv2["isValyse"] = function()
-        if identifyexecutor and tostring(identifyexecutor()):lower():find("val") then return true end
+        return Valyse and true or false
     end
     mv2['ver'] = ver
     mv2['magnitude'] = function(v1, v2)
@@ -1137,26 +909,26 @@ do
     api = mv2
 end
 
-player = Players.LocalPlayer
+local player = Players.LocalPlayer
 
 local plantersCacheFilePath = "macrov3/plantercache/"..player.Name.."_customPlantersCache.json"
 if not isfolder("macrov3") then makefolder("macrov3") end
 if not isfolder("macrov3/plantercache") then makefolder("macrov3/plantercache") end
-warn(plantersCacheFilePath)
+-- warn(plantersCacheFilePath)
 -- Destroy other macro v2 guis
 if gethui then
     for i, v in pairs(gethui():GetDescendants()) do
         if v:IsA("TextLabel") then
-            if v.Text:find("Macro V") then
-                v.Parent.Parent:Destroy()
+            if v.Name:find("MacroV") then
+                v.Parent.Parent.Parent.Parent.Parent:Destroy()
             end
         end
     end
 else
     for i, v in pairs(CoreGui:GetDescendants()) do
         if v:IsA("TextLabel") then
-            if v.Text:find("Macro V") then
-                v.Parent.Parent:Destroy()
+            if v.Name:find("MacroV") then
+                v.Parent.Parent.Parent.Parent.Parent:Destroy()
             end
         end
     end    
@@ -1202,10 +974,10 @@ function Tasks:Get(taskName)
 end
 function Tasks:CancelAll()
     for i,v in pairs(Tasks._LIST) do
-        -- print("Stopping \""..i.."\"")
+        print("Stopping \""..i.."\"")
         pcall(function() 
             task.cancel(v)
-            -- print("Stopped \""..i.."\"")
+            print("Stopped \""..i.."\"")
         end)
     end
 end
@@ -1252,11 +1024,14 @@ getgenv().macrov2 = {
     },
     vars = {
         equipAccessoryMethod = "Tween",
-        defaultmask = "Honey Mask",
+        defaultmask = "None",
         rares = {},
     },
     autoFarmSettings = {
         field = "Dandelion Field",
+
+        autoSprinkler = true,
+        -- farmOnlySelectedTokens = false
 
         farmShower = false,
         farmCoconuts = false,
@@ -1265,17 +1040,22 @@ getgenv().macrov2 = {
         farmUnderClouds = false,
         farmUnderBalloons = false,
         farmFuzzyBombs = false,
+        farmDupedTokens = false,
 
         smartBubbleBloat = false,
         smartPreciseCrosshair = false,
-        smartPreciseMethod = "Fast Tween",
+        smartPreciseMethod = "Fast Tween "..Danger,
         -- farmPrecise = false,
         -- smartPrecise = false,
         -- farmFuzzy = false,
         -- smartFlame = false,
         -- smartBubbles = false,
         ignoreHoneyTokens = false,
-        farmSprouts = false
+        farmSprouts = false,
+
+        faceBalloons = false,
+        faceFlames = false,
+        faceCenter = false,
     },
     convertSettings = {
         secondsBeforeConvert = 0,
@@ -1388,7 +1168,7 @@ getgenv().macrov2 = {
     },
     localPlayerSettings = {
         walkSpeed = 60,
-        tweenSpeed = 5
+        tweenSpeed = 7
     },
     combatSettings = {
         trainCrab = false,
@@ -1440,7 +1220,7 @@ getgenv().macrov2 = {
 local defaultMacroV2Config = macrov2
 
 getgenv().temptable = {
-    version = "0.0.4b",
+    version = "0.0.5a",
     convertingHoney = false,
     stopAll = false,
     activeMemoryMatch = nil,
@@ -1469,11 +1249,6 @@ getgenv().temptable = {
     doingMonster = false,
     doingTokens = false,
 
-    lastClientStatCacheUpdate = 0,
-    lastBalloonPollen = 0,
-
-    showerStars = {},
-
     stopAutofarm = false,
 
     autoRJSettings = {
@@ -1495,6 +1270,8 @@ getgenv().temptable = {
     leafTable = {},
     sparklesTable = {},
     balloonsTable = {},
+
+    FieldBalloons = nil,
 
     codesTable = {
         "Wax",
@@ -1540,7 +1317,8 @@ getgenv().temptable = {
     questFeedCooldown = false,
     questUseToyCooldown = false,
 
-    dupedTokensTable = {}
+    dupedTokensTable = {},
+    EquippedCollector = "Not loaded"
 }
 
 -- Important Parts 
@@ -1561,183 +1339,155 @@ tunnelPart.Transparency = 1
 tunnelPart.Parent = Workspace
 Workspace.Decorations.TrapTunnel["Tunnel Ceiling"].CanCollide = false
 
+if not Workspace:FindFirstChild("Cave") then
+    local CaveFolder = Instance.new("Folder", Workspace)
+    CaveFolder.Name = "Cave"
+
+    local FillPart = Instance.new("Part", CaveFolder)
+    FillPart.Name = "FillPart"
+    FillPart.Position = Vector3.new(-29.765, 70.252, -144)
+    FillPart.Size = Vector3.new(149.529, 10.607, 89.198)
+    FillPart.Transparency = 1
+end
 
 function removeFromTable(Table, element)
     return table.remove(Table, table.find(Table, element))
 end
 
-function calculateTweenSpeed(magnitude, speed)
-    return magnitude / (speed or 40)
+function getTweenSpeed()
+    return (macrov2.localPlayerSettings.tweenSpeed * 10) or 70
 end
 
 function bssAlert(style, text)
     secureCall(AlertBoxes.Push, player.PlayerScripts.AlertBoxes, nil, text, nil, style)
 end
 
-local Tween = {
-    ["_State"] = false,
-    ["_NoClip"] = nil,
-    ["_AntiFall"] = nil,
-    ["_CurrentAnimation"] = {TerminateEvent = nil, Animation = nil},
-    ["_Processing"] = false,
-    ["calculateSpeed"] = function(magnitude, speed)
-        return magnitude / (speed or 40)
-    end,
-    
-}
-Tween["_UpdateState"] = function(state) 
-    if state == true then
-        if Tween["_NoClip"] == nil then
-            Tween["_NoClip"] = game.RunService.Stepped:Connect(function() 
-                pcall(function() api.humanoidrootpart().Velocity = Vector3.new(0,0,0) end)
-            end)
-        end
-        
-        if Tween["_AntiFall"] == nil or Tween["_AntiFall"].Parent ~= api.humanoidrootpart() then
-            if Tween["_AntiFall"] and Tween["_AntiFall"].Parent ~= api.humanoidrootpart() then Tween["_AntiFall"]:Destroy() end
-            Tween["_AntiFall"] = Instance.new("BodyVelocity", api.humanoidrootpart())
-            Tween["_AntiFall"].Velocity = Vector3.new(0, 0, 0)
-            Tween["_AntiFall"].Name = "Tween_AntiFall"
-        end
-        Tween["_State"] = true
-    elseif state == false then
-        if Tween["_NoClip"] then
-            pcall(function() Tween["_NoClip"]:Disconnect() end)
-        end
-        if Tween["_AntiFall"] then
-            pcall(function() Tween["_AntiFall"]:Destroy() end)
-            if api.humanoidrootpart() and api.humanoidrootpart():FindFirstChild("Tween_AntiFall") then
-                pcall(function() api.humanoidrootpart():FindFirstChild("Tween_AntiFall"):Destroy() end)
+function checkCave(startPos, endPos)
+    local direction = (endPos - startPos).Unit
+    local ray = Ray.new(startPos, direction * (endPos - startPos).magnitude)
+    local part = Workspace:FindPartOnRayWithWhitelist(ray, {Workspace.Cave})
+    if part then return true else return false end
+end
+
+getgenv().TweenNoclip = nil
+function stopTween()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character.PrimaryPart
+    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+
+    if getgenv().TweenNoclip then 
+        pcall(function() TweenNoclip:Disconnect() end) 
+        TweenNoclip = nil 
+    end
+
+    if humanoidRootPart then
+        for i,v in pairs(humanoidRootPart:GetChildren()) do
+            if v:IsA("AlignPosition") or v:IsA("AlignOrientation") then
+                v:Destroy()
             end
         end
-        Tween["_State"] = false
-    end
-end
-Tween["getState"] = function() 
-    return Tween["_State"]
-end
-
-Tween["getSpeed"] = function() 
-    return macrov2.localPlayerSettings.tweenSpeed * 10
-end
-Tween["_Stop"] = function()
-    if Tween["_CurrentAnimation"].Animation then 
-        local s,e = pcall(function() Tween["_CurrentAnimation"].TerminateEvent:Fire() end)
-        local s1,e1 = pcall(function() 
-            Tween["_CurrentAnimation"].Animation:Cancel() 
-            Tween["_CurrentAnimation"].Animation = nil 
-        end) 
-        local s2,e2 = pcall(function() 
-            Tween["_CurrentAnimation"].TerminateEvent:Destroy() 
-            Tween["_CurrentAnimation"].TerminateEvent = nil 
-        end)
-        if not s then warn("e: "..e) end
-        if not s1 then warn("e1: "..e1) end
-        if not s2 then warn("e2: "..e2) end
-    end
-    Tween["_UpdateState"](false)
-end
-Tween["_Start"] = function(position, speed, secondsOnly)
-    -- warn(position, speed, secondsOnly)
-    -- warn(typeof(position), typeof(speed), typeof(secondsOnly))
-    if Tween["_Processing"] then return false, "Another tween already starting..." end
-    Tween["_Processing"] = true
-
-    if Tween["getState"] == true then
-        Tween["_UpdateState"](false)
     end
 
-    Tween["_UpdateState"](true)
-
-    local humanoidRootPart
-    while not humanoidRootPart do humanoidRootPart = api.humanoidrootpart() task.wait() end
-    
-    local magnitude = (humanoidRootPart.Position - position).magnitude
-    local mainSpeed = Tween["getSpeed"]()
-    local newSpeed
-
-    if speed and secondsOnly then newSpeed = speed
-    elseif speed and not secondsOnly then newSpeed = Tween.calculateSpeed(magnitude, speed)
-    else newSpeed = Tween.calculateSpeed(magnitude, Tween["getSpeed"]()) end
-    -- print(newSpeed)
-
-    local tweenInfo = TweenInfo.new(newSpeed, Enum.EasingStyle.Linear)
-    local tweenProperties = {CFrame = CFrame.new(position)}
-    Tween["_CurrentAnimation"].TerminateEvent = Instance.new("BindableEvent")
-    Tween["_CurrentAnimation"].Animation = TweenService:Create(humanoidRootPart, tweenInfo, tweenProperties)
-
-    local tweenCompleted = false
-    local tweenStarted = tick()
-
-    local isHumanoidDead = false
-    local isTweenTerminated = false
-    
-    local humanoid
-    while not humanoid do humanoid = api.humanoid() task.wait() end
-
-    Tween["_CurrentAnimation"].Animation.Completed:Connect(function() 
-        tweenCompleted = true
-    end)
-
-    humanoid.Died:Connect(function()
-        isHumanoidDead = true
-    end)
-    
-    Tween["_CurrentAnimation"].TerminateEvent.Event:Connect(function() isTweenTerminated = true end)
-    Tween["_CurrentAnimation"].Animation:Play()
-    Tween["_Processing"] = false
-
-    while not tweenCompleted and task.wait() do
-        if isTweenTerminated then return false, "Terminate Tween" end
-
-        if isHumanoidDead then return false, "Humanoid Dead" end
-
-        if not secondsOnly and not speed and mainSpeed ~= Tween["getSpeed"]() then return false, "Speed changed" end
-    end
-
-    return true, "Success"
+    if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Freefall) end
 end
 
-Tween["MakeTween"] = function(position, speed, secondsOnly)
-    local tweenSuccess = false
-    local originalArgs = {position, speed, secondsOnly}
-    local newArgs = nil
-    while not tweenSuccess do
-        local tweenDone, message, args = Tween["_Start"](unpack((newArgs or originalArgs)))
-        -- warn(tweenDone, message)
-        Tween["_Stop"]()
+function tween(pos, speed, caveAvoid)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local humanoidRootPart = character.PrimaryPart
+    local b = false
+    if checkCave(humanoidRootPart.Position, pos) and not caveAvoid then
+        print("Cave.")
+        tween(Vector3.new(8, 90, -140), speed, true)
+        character = player.Character or player.CharacterAdded:Wait()
+        humanoid = character:WaitForChild("Humanoid")
+        humanoidRootPart = character.PrimaryPart
+    end
 
-        if not tweenDone or message ~= "Success" then
-            if message == "Terminate Tween" then return false, "Tween Terminated"
-            elseif message == "Speed changed" then continue 
-            else
-                newArgs = args or nil
-                -- print("ffwegwr: "..(message or "NOTHING"))
-                if message == "Humanoid Dead" then 
-                    player.CharacterAdded:Wait(30)
-                    repeat task.wait() until api.humanoidrootpart() and api.humanoid()
-                    print("respawned")
-                end
+    stopTween()
+    local fixedSpeed = false
+    if speed then fixedSpeed = true end
+
+    local alignPos = Instance.new("AlignPosition")
+    alignPos.Mode = Enum.PositionAlignmentMode.OneAttachment
+    alignPos.Attachment0 = humanoidRootPart.RootAttachment
+    alignPos.MaxForce = math.huge
+    alignPos.MaxVelocity = (fixedSpeed and speed) or getTweenSpeed()
+    alignPos.Position = pos
+    alignPos.Parent = humanoidRootPart
+
+    local alignOrientation = Instance.new("AlignOrientation")
+    alignOrientation.Attachment0 = humanoidRootPart.RootAttachment
+    alignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
+    alignOrientation.RigidityEnabled = true
+    alignOrientation.CFrame = humanoidRootPart.CFrame
+    alignOrientation.Parent = humanoidRootPart
+
+    -- humanoid:ChangeState(Enum.HumanoidStateType.Landed)
+    -- task.wait()
+    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+    getgenv().TweenNoclip = RunService.PostSimulation:Connect(function()
+        for _, part in character:GetDescendants() do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
             end
-            task.wait()
-        else
-            tweenSuccess = true
-            break
         end
+    end)
+
+    local startTimestamp = tick()
+    local playerDied = false
+    local a = humanoid.Died:Connect(function() 
+        playerDied = true
+    end)
+
+    local tempNoClip = getgenv().TweenNoclip
+
+    repeat 
+        task.wait()
+        if not fixedSpeed then
+            alignPos.MaxVelocity = getTweenSpeed()
+        end
+    until 
+        player:DistanceFromCharacter(pos) <= 5
+        or tempNoClip ~= getgenv().TweenNoclip 
+        or playerDied
+        or (tick() - startTimestamp) > 30
+
+    a:Disconnect()
+    if playerDied then
+        stopTween()
+        warn("ok1")
+        player.CharacterAdded:Wait()
+        task.wait(0.5)
+        if caveAvoid then return end
+        return false, tween(pos, speed)
     end
-    return tweenSuccess
+
+    if (tick() - startTimestamp) > 45 then 
+        error("[Macro V3] (%s) | An error has occurred: %s"):format(temptable.version, "Tween timed out.") 
+    end
+
+    if tempNoClip == TweenNoclip then
+        return true, stopTween()
+    end
+
+    return false
 end
 
-function startTween(...)
+function startTween(pos, speed)
     local tweenCompleted = nil
-    coroutine.wrap(function(...) 
-        tweenCompleted = pcall(Tween.MakeTween(...), ...)
-    end)(...)
+    coroutine.wrap(function() 
+        tweenCompleted = pcall(function() 
+            tween(pos, speed)
+        end)
+        if tweenCompleted == nil then tweenCompleted = false end
+    end)()
     repeat task.wait() until tweenCompleted ~= nil
 end
 
-function moveTo(pos)
-    startTween(pos+Vector3.new(0,3,0))
+getgenv().moveTo = function(pos)
+    startTween(pos + Vector3.new(0,3,0))
     -- if not tween(macrov2.localPlayerSettings.tweenSpeed * 10, pos+Vector3.new(0, 2, 0)) then setTweenState(false) error("Tween failed - main") end
     -- setTweenState(false)
 end
@@ -1752,6 +1502,25 @@ function jsonDecode(json)
     local luaTable
     local a,s = pcall(function() luaTable = HttpService:JSONDecode(json) end)
     return luaTable
+end
+
+function getPartsFromRay(ray, whitelist)
+	if typeof(whitelist) == "Instance" then whitelist = whitelist:GetDescendants() 
+    elseif typeof(whitelist) == "nil"  then whitelist = {} end
+	
+	local Parts = {}
+	local LastPart
+	
+	repeat
+		LastPart = workspace:FindPartOnRayWithIgnoreList(ray, Parts)
+		table.insert(Parts, LastPart)
+	until LastPart == nil
+
+	for i,v in pairs(Parts) do
+		if not table.find(whitelist, v) then table.remove(Parts, i) continue end
+	end
+
+	return Parts
 end
 
 if macrov2.webhookSettings.discordId ~= "0" then
@@ -1791,7 +1560,7 @@ while not player:FindFirstChild("Honeycomb") do
                     -- setIdentity(7)
                     task.wait(.75)
                 else 
-                    moveTo(hive.SpawnPos.Value.p)
+                    moveTo(hive.SpawnPos.Value.p - Vector3.new(0,2,0))
                 end
                 task.wait()
             until hive.Owner.Value or player:FindFirstChild("Honeycomb")
@@ -1984,11 +1753,11 @@ function getMinePlanters()
 end
 
 function updateClientStatCache(...)
-    return ClientStatCache.Update(nil,{...})
+    return ClientStatCache:Update({...})
 end
 
 function getClientStatCache(...)
-    return ClientStatCache.Get(nil,{...})
+    return ClientStatCache:Get({...})
 end
 
 function getDailyHoney()
@@ -2309,6 +2078,8 @@ function getNewFarmCenter(field, sprinkler)
     end
     return flowerCenter
 end
+
+
 
 function jump()
     if not player.Character.Humanoid.Jump then
@@ -2706,9 +2477,8 @@ task.spawn(function()
     for i,v in pairs(Items) do
         if not v.Hidden then
             if v.DisplayName then
-                local succ,err = xpcall(function()
-                    HttpService:JSONEncode(v)
-                end, function(err) warn("[Error]:", err) end)
+                local succ = pcall(function() HttpService:JSONEncode(v) end)
+                if not succ then continue end
                 v["SystemName"] = i
                 FormattedItems["FullData"][v.DisplayName] = v
                 table.insert(FormattedItems["NamesOnly"], v.DisplayName)
@@ -2817,6 +2587,37 @@ end
 --     temptable.leafTable = leafTable
 --     return leafTable
 -- end
+
+function getBestFieldBalloon()
+    if not api.humanoidrootpart() then return warn(1) end
+    local humanoidRootPart = api.humanoidrootpart()
+
+    local bestFieldBalloon = {instance = nil, mostBalloonsInRow = -1}
+
+    for _,balloon in pairs(temptable.balloonsTable) do
+        if not balloon:FindFirstChild("BalloonBody") then continue end
+        local playerPos = humanoidRootPart.Position + Vector3.new(0,16,0)
+        local balloonPos = balloon.BalloonBody.Position
+
+        if not isFieldSame(playerPos - Vector3.new(0,16,0), balloonPos - Vector3.new(0,16,0)) then continue end
+
+        local __, res = pcall(function()  
+            if balloon.BalloonBody.GuiAttach.Gui.Bar.BackgroundTransparency ~= 1 then return true end
+        end)
+        if res ~= true then warn(isOK, res) continue end
+
+        local ray = Ray.new(playerPos, (Vector3.new(balloonPos.X, playerPos.Y, balloonPos.Z) - playerPos))
+
+        local intersection = getPartsFromRay(ray, temptable.FieldBalloons)
+
+        if intersection and #intersection >= bestFieldBalloon.mostBalloonsInRow then
+			bestFieldBalloon.mostBalloonsInRow = #intersection
+			bestFieldBalloon.instance = balloon
+		end
+    end
+
+    return bestFieldBalloon.instance
+end
 
 function getPuffsOnField(field)
     local puffsOnField = {}
@@ -3360,7 +3161,7 @@ function smartFarmCrosshairs()
             else
                 repeat task.wait() 
                     if api.magnitude(crosshair.Position) > 5 then
-                        startTween(crosshair.Position - Vector3.new(0,1.8,0), 0.06, true)
+                        startTween(crosshair.Position - Vector3.new(0,1.8,0), 350)
                         -- tween(0.06,crosshair.Position - Vector3.new(0,1.8,0), true)
                     end
                 until not crosshair.Parent or save_height ~= crosshair.Position.y or (#getCrosshairs().purple > 1)
@@ -3457,12 +3258,20 @@ function killMonster(territory, spawner)
         -- print("OK")
         if (tick() - startTimeStamp) > 60 then break end
         -- print(not isMonsterKilled(spawner))
-        if api.magnitude(territory.Position) > 45 then
-            moveTo(territory.Position + Vector3.new(10,0,-5))
-            task.wait(1)
+        if api.magnitude(territory.Position) > 60 then
+            moveTo(territory.Position)
+            task.wait(0.25)
         end
+        if spawner.Name:find("ForestMantis") then 
+            if api.magnitude(territory.Position + Vector3.new(0,0,15)) < 6 then
+                api.humanoid():MoveTo(territory.Position - Vector3.new(0,0,15))
+            else
+                api.humanoid():MoveTo(territory.Position + Vector3.new(0,0,15))
+            end
+        end
+        task.wait(0.5)
         jump()
-        task.wait(2)
+        task.wait(1)
     end
     temptable.doingMonster = false
     return isMonsterKilled(spawner)
@@ -3510,13 +3319,17 @@ function killVicious()
 end
 
 function getQuestInfo(questName)
+    setIdentity(2)
 	local toReturn = Quests.Get(nil, questName)
+    setIdentity(origThreadIdentity)
 	return toReturn
 end
 
 function getQuestProgress(questName)
+    setIdentity(2)
 	local toReturn = Quests.Progress(nil, questName, getClientStatCache())
-	return toReturn
+	setIdentity(origThreadIdentity)
+    return toReturn
 end
 
 function getQuestSetting(npc, Type)
@@ -3866,7 +3679,9 @@ function doQuests(NPC)
             local taskDescription = questTask.Description
             if typeof(taskDescription) ~= "string" then 
                 setIdentity(2)
-                taskDescription = taskDescription(getClientStatCache()) 
+                -- print(1)
+                taskDescription = taskDescription(getClientStatCache())
+                -- print(2)
                 setIdentity(origThreadIdentity)
             end
 
@@ -4550,8 +4365,10 @@ function mainAutofarmFunction()
 
                 if not isFieldSame(api.humanoidrootpart().Position, temptable.fieldPosition) then
                     moveTo(temptable.fieldPosition + Vector3.new(0,3,0))
-                    task.wait()
-                    placeSprinklers(temptable.fieldPosition)
+                    if macrov2.autoFarmSettings.autoSprinkler then
+                        task.wait()
+                        placeSprinklers(temptable.fieldPosition)
+                    end
                 end
 
                 if macrov2.autoFarmSettings.smartPreciseCrosshair and #getCrosshairs().all > 0 then
@@ -4572,7 +4389,7 @@ function mainAutofarmFunction()
                     -- isFarmed = isFarmed or farmed
                 -- end
                 
-                if math.random(68,70) == 69 then
+                if macrov2.autoFarmSettings.farmUnderBalloons and math.random(68,70) == 69 then
                     local farmed = gotoNearestBalloon()
                     isFarmed = isFarmed or farmed
                 end
@@ -4587,7 +4404,7 @@ function mainAutofarmFunction()
             elseif macrov2.toggles.convertHoney and shouldIConvert(false, false) then
                 convertHoney(macrov2.toggles.converthiveballoon)
             end
-        end, function(err) warn(("%s | An error has occurred: %s"):format(temptable.version, err)) end)
+        end, function(err) warn(("[Macro V3] (%s) | An error has occurred: %s"):format(temptable.version, err)) end)
     end
 end
 
@@ -5310,10 +5127,10 @@ UIConfig = {
     Keybind = _G.keybind and Enum.KeyCode[_G.keybind] or Enum.KeyCode.Semicolon
 }
 
-Window = library:Init(UIConfig)
-Window:Intro()
-Window:AddTheme('rbxassetid://13338353633')
-Window:AddTheme('rbxassetid://13338328479')
+Window = library:Make(UIConfig)
+-- Window:Intro()
+-- Window:AddTheme('rbxassetid://13338353633')
+-- Window:AddTheme('rbxassetid://13338328479')
 
 if _G.debugging then
     warn("UI loaded. task.waiting 5 seconds")
@@ -5357,13 +5174,11 @@ function updatedLabel(label, newText)
     return label.Set(newText)
 end
 
-function createDropdown(section, dropDownText, dropDownTable, config, callback)
-    Callback = function(Option)
-        if not (config == false or config == nil) and callback == true then
+function createDefaultDropdown(section, dropDownText, dropDownTable, config, callback)
+    local Callback = function(Option)
+        if not (config == false or config == nil) then
             if typeof(config) == "table" then
                 macrov2[config[1]][config[2]] = Option
-            elseif typeof(config) == "string" then
-                macrov2.vars[config] = Option
             end
         end
         
@@ -5372,20 +5187,75 @@ function createDropdown(section, dropDownText, dropDownTable, config, callback)
             callback(Option)
         end
     end
-    local newDropdown = section:Dropdown(dropDownText, dropDownTable, Callback)
+    local newDropdown = section:Dropdown(dropDownText, {Type = "Default", Options = dropDownTable}, {onSelect = Callback})
     if config then
         if typeof(config) == "table" then
             -- print(config[2])
             guiElements[config[1]][config[2]] = newDropdown
-        elseif typeof(config) == "string" then
-            guiElements.vars[config] = newDropdown
+        end
+    end
+    return newDropdown
+end
+
+function createRemovableDropdown(section, dropDownText, dropDownTable, config, callback)
+    local Callback = function(Option)
+        if not (config == false or config == nil) then
+            if typeof(config) == "table" then
+                local index = table.find(macrov2[config[1]][config[2]], Option)
+                if index then table.remove(macrov2[config[1]][config[2]], i) end
+            end
+        end
+        
+        if typeof(callback) == "function" then
+            callback(Option)
+        end
+    end
+    local newDropdown = section:Dropdown(dropDownText, {Type = "Removable", Options = dropDownTable}, {onRemove = Callback})
+    if config then
+        if typeof(config) == "table" then
+            guiElements[config[1]][config[2]] = newDropdown
+        end
+    end
+    return newDropdown
+end
+
+function createMultiDropdown(section, dropDownText, dropDownTable, config, onSelectCallback, onDeselectCallback)
+    local SelectCallback = function(Option)
+        if not (config == false or config == nil) then
+            if typeof(config) == "table" then
+                table.insert(macrov2[config[1]][config[2]], Option)
+            end
+        end
+        
+        if typeof(onSelectCallback) == "function" then
+            onSelectCallback(Option)
+        end
+    end
+
+    local DeSelectCallback = function(Option)
+        if not (config == false or config == nil) then
+            if typeof(config) == "table" then
+                local index = table.find(macrov2[config[1]][config[2]], Option)
+                if index then table.remove(macrov2[config[1]][config[2]], index) end
+            end
+        end
+        
+        if typeof(onDeselectCallback) == "function" then
+            onDeselectCallback(Option)
+        end
+    end
+
+    local newDropdown = section:Dropdown(dropDownText, {Type = "Multi", Options = dropDownTable}, {onSelect = SelectCallback, onDeselect = DeSelectCallback})
+    if config then
+        if typeof(config) == "table" then
+            guiElements[config[1]][config[2]] = newDropdown
         end
     end
     return newDropdown
 end
 
 function createToggle(section, toggleText, config, callback)
-    Callback = function(state)
+    local Callback = function(state)
         if not (config == false or config == nil) then
             if typeof(config) == "table" then
                 macrov2[config[1]][config[2]] = state
@@ -5449,8 +5319,8 @@ function createInput(section, inputText, inputPlaceholder, config, callback)
     return newInput
 end
 
-function createButton(section, buttonText, callback)
-    section:Button(buttonText, callback)
+function createButton(section, buttonName, buttonText, callback)
+    section:Button(buttonName, buttonText or "", callback)
 end
 
 function saveConfig()
@@ -5469,84 +5339,6 @@ function saveConfig()
     end
 end
 
-function loadConfig(configName)
-    -- warn(("Config name: BSS_%s.json"):format(configName))
-    local success, err = pcall(function()
-        if not readfile or not isfile then error("Load config is not supported by your executor.") end
-        if not isfile("macrov3/BSS_"..configName..".json") then error("You don't have a saved config.") end
-
-        local oldConfig = macrov2
-
-        local loadedConfig = jsonDecode(readfile("macrov3/BSS_"..configName..".json"))
-        if not loadedConfig or typeof(loadedConfig) ~= "table" then error("Config not loaded.") end
-
-        for settingsCategory, settingsTable in pairs(macrov2) do
-            if loadedConfig[settingsCategory] then
-                for settingName, settingValue in pairs(settingsTable) do
-                    if loadedConfig[settingsCategory][settingName] ~= nil then
-                        macrov2[settingsCategory][settingName] = loadedConfig[settingsCategory][settingName]
-                    end
-                end
-            end
-        end
-
-        -- warn(111)
-
-        -- getgenv().macrov2 = loadedConfig
-    for settingsType,v in pairs(guiElements) do
-        -- warn(settingsType)
-        for settingName,k in pairs(v) do
-            local tag = k["Tag"]
-            -- warn(tag)
-            if tag == "Dropdown" then
-                pcall(function()
-                    if typeof(macrov2[settingsType][settingName]) == "table" then
-                        k.Update(macrov2[settingsType][settingName])
-                    else
-                        k.Set(macrov2[settingsType][settingName])
-                    end
-                end)
-            elseif tag == "Slider" then
-                pcall(function()
-                    k.Set(tonumber(macrov2[settingsType][settingName]))
-                end)
-            elseif tag == "Toggle" then
-                pcall(function()
-                    k.Set(macrov2[settingsType][settingName])
-                end)
-            elseif tag == "Box" then
-                pcall(function()
-                    k.Set(macrov2[settingsType][settingName])
-                end)
-            end
-        end
-    end
-    temptable.shouldEquipDefaultMask = true
-end)
-
-    for cycleName, cycleTable in pairs(customPlanterSections) do
-        for cycleStep, stepUIs in pairs(cycleTable) do
-            if cycleStep == "section" then continue end
-
-            stepUIs.HarvestAmount.Set(macrov2.customPlanterSettings[cycleName][cycleStep].harvestAmount)
-            stepUIs.Field.Set(macrov2.customPlanterSettings[cycleName][cycleStep].field)
-            stepUIs.Planter.Set(macrov2.customPlanterSettings[cycleName][cycleStep].planter)
-        end
-    end
-
-    if success then
-        api.notify("Macro V3 - Config", "Config successfully loaded.",3)
-    elseif err then
-        local errMsg
-        if api.isSynV3() then
-            errMsg = err:split(":")[1]
-        else
-            errMsg = err:split(":")[3]
-        end
-        api.notify("Macro V3 - Config", "Error while loading config: \n"..(errMsg or "no error"),3)
-    end
-end
-
 if _G.debugging then
     warn("UI init.")
 end
@@ -5556,15 +5348,26 @@ homeTab = createTab("Home")
 
 informationSection = createSection(homeTab, "Information")
 -- welcomeLabel = createLabel(informationSection, "Welcome, "..--[[ api.nickname]]"Onett".."!")
-createButton(informationSection, "Redeem Codes", function() 
+createButton(informationSection, "Redeem Codes", "", function() 
     for _,code in pairs(temptable.codesTable) do
         Events.ClientCall("PromoCodeEvent", code)
         task.wait(0.5)
     end
 end)
+local done111 = false
+createButton(informationSection, "Break datastore (datalose)", "Do it!", function(state) 
+    if not done111 then 
+        done111 = true
+        game:GetService("ReplicatedStorage").Events.UpdatePlayerNPCState:FireServer("Black Bear", "f\255", "Finish")
+    end
+end)
 createToggle(informationSection, "Stop Everything", nil, function(state) 
     temptable.stopEverything = state
 end)
+createToggle(informationSection, "Anonymous Mode", nil, function(state) 
+    Window:ChangeAnonymousState(state)
+end)
+
 
 statsTrackerSection = createSection(homeTab, "Stats Tracker")
 
@@ -5586,7 +5389,7 @@ farmingTab = createTab("Farming")
 
 farmingSection = createSection(farmingTab, "Farming")
 
-createDropdown(farmingSection, "Field", fieldsTable, {"autoFarmSettings", "field"}, true).Set(macrov2.autoFarmSettings.field)
+createDefaultDropdown(farmingSection, "Farming Field", fieldsTable, {"autoFarmSettings", "field"}, true):Select(macrov2.autoFarmSettings.field)
 
 createToggle(farmingSection, "Autofarm [⚙]", "autofarm", function(State)
     macrov2.toggles.autofarm = State
@@ -5600,7 +5403,9 @@ createToggle(farmingSection, "Autofarm [⚙]", "autofarm", function(State)
     end
 end)
 
-autoDig = createToggle(farmingSection, "Auto Dig", "autodig", function(State) 
+createToggle(farmingSection, "Auto Sprinkler", {"autoFarmSettings", "autoSprinkler"}, true):Set(macrov2.autoFarmSettings.autoSprinkler or true)
+
+autoDig = createToggle(farmingSection, "Auto Dig", "autodig", function(State)
     macrov2.toggles.autodig = State
     if State then
         Tasks:Add("Auto Dig", function() 
@@ -5628,30 +5433,21 @@ createToggle(farmingSection, "Farm Under Balloons", {"autoFarmSettings", "farmUn
 createToggle(farmingSection, "Farm Shower", {"autoFarmSettings", "farmShower"}, true)
 createToggle(farmingSection, "Farm Coconuts", {"autoFarmSettings", "farmCoconuts"}, true)
 createToggle(farmingSection, "Farm Glitched Tokens", {"autoFarmSettings", "farmDupedTokens"}, true)
+-- createToggle(farmingSection, "Farm Only Selected Tokens", {"autoFarmSettings", "farmOnlySelectedTokens"}, true)
 
 createToggle(farmingSection, "Farm Sprouts", {"autoFarmSettings", "farmSprouts"}, true)
 createToggle(farmingSection, "Smart Bubble Bloat"..Star, {"autoFarmSettings", "smartBubbleBloat"}, true)
 createToggle(farmingSection, "Smart Precise Crosshair"..Star, {"autoFarmSettings", "smartPreciseCrosshair"}, true)
-createDropdown(farmingSection, "Smart Crosshair farm", {"Fast Tween", "Walk"}, {"autoFarmSettings", "smartPreciseMethod"}, true).Set(macrov2.autoFarmSettings.smartPreciseMethod)
+createDefaultDropdown(farmingSection, "Smart Crosshair farm", {"Fast Tween "..Danger, "Walk"}, {"autoFarmSettings", "smartPreciseMethod"}, true):Select(macrov2.autoFarmSettings.smartPreciseMethod)
 
 createToggle(farmingSection, "Use Instant Convertion", {"convertSettings", "instantToggle"}, true)
-local instantC = {}
-createDropdown(farmingSection, "Instant Convertion Add", instantConvList, nil, function(item)
-    if table.find(macrov2.convertSettings.selectedInstant, item) then return api.notify("Macro V3 | Error", item.." has already been added") end
-    table.insert(macrov2.convertSettings.selectedInstant, item)
-    api.notify("Macro V3 | Success", item.." has been added")
-    instantC.Update(macrov2.convertSettings.selectedInstant)
-end)
-instantC = createDropdown(farmingSection, "Instant Convertion Remove", macrov2.convertSettings.selectedInstant, nil, function(item)
-    if not table.find(macrov2.convertSettings.selectedInstant, item) then return api.notify("Macro V3 | Error", item.." doesn't exist") end
-    table.remove(macrov2.convertSettings.selectedInstant, table.find(macrov2.convertSettings.selectedInstant, item))
-    api.notify("Macro V3 | Success", item.." has been removed")
-    instantC.Update(macrov2.convertSettings.selectedInstant)
-end)
 
-createDropdown(farmingSection, "Default Mask", {"Diamond Mask", "Demon Mask", "Honey Mask"}, {"vars", "defaultmask"}, function() 
+local instantC = {}
+instantC = createMultiDropdown(farmingSection, "Instant Convertion", instantConvList, {"convertSettings", "selectedInstant"})
+
+createDefaultDropdown(farmingSection, "Default Mask", {"Diamond Mask", "Demon Mask", "None"}, {"vars", "defaultmask"}, function() 
     temptable.shouldEquipDefaultMask = true
-end)
+end):Select(macrov2.vars.defaultmask)
 createToggle(farmingSection, "Auto Honey Mask", {"toggles", "AutoHoneyM"}, true)
 -- createToggle(farmingSection, "Farm Precise Croshairs", {"autoFarmSettings", "farmPrecise"}, true)
 
@@ -5664,6 +5460,24 @@ createToggle(automatisationFarmSection, "Auto Memory Match", "automemorymatch", 
 for i,v in pairs(AllToysTable.toysTable) do
     createToggle(automatisationFarmSection, "Auto "..v, {"toggles", i}, true)
 end
+
+autoFaceSection = createSection(farmingTab, "Auto Face")
+local fCenter, fBalloon, fFlame
+fCenter = createToggle(autoFaceSection, "Face Field Center", {"autoFarmSettings", "faceCenter"}, function(state) 
+    if not state then return end
+    fBalloon:Set(false)
+    fFlame:Set(false)
+end)
+fBalloon = createToggle(autoFaceSection, "Face Balloons", {"autoFarmSettings", "faceBalloons"}, function(state) 
+    if not state then return end
+    fCenter:Set(false)
+    fFlame:Set(false)
+end)
+fFlame = createToggle(autoFaceSection, "Face Flames", {"autoFarmSettings", "faceFlames"}, function(state) 
+    if not state then return end
+    fCenter:Set(false)
+    fBalloon:Set(false)
+end)
 
 combatTab = createTab("Combat")
 
@@ -5689,7 +5503,7 @@ autoQuestTab = createTab("Auto Quest")
 
 questsToDoSection = createSection(autoQuestTab, "Quests to do")
 createToggle(questsToDoSection, "Auto Quests", {"autoQuestSettings", "doQuests"}, true)
-createToggle(questsToDoSection, "Auto Repeatable Quests", {"autoQuestSettings", "doRepeatables"}, true).Set(true)
+createToggle(questsToDoSection, "Auto Repeatable Quests", {"autoQuestSettings", "doRepeatables"}, true):Set(true)
 createToggle(questsToDoSection, "Accept All Quests", {"autoQuestSettings", "acceptAllQuests"}, true)
 createLabel(questsToDoSection, "")
 createToggle(questsToDoSection, "Black Bear Quests", {"autoQuestSettings", "BlackBearQuests"}, true)
@@ -5720,19 +5534,19 @@ createToggle(questSettingsSection, "Do Quests For Quests", {"autoQuestSettings",
 temptable.npcPrioSlider = {}
 temptable.npcPrioSlider.Set = function() return end
 questFarmSettingsSection = createSection(autoQuestTab, "Quests Farm Settings")
-createDropdown(questFarmSettingsSection, "Blue Pollen From", blueFields, {"autoQuestSettings", "bestBlueField"}, true).Set(macrov2.autoQuestSettings.bestBlueField)
-createDropdown(questFarmSettingsSection, "Red Pollen From", redFields, {"autoQuestSettings", "bestRedField"}, true).Set(macrov2.autoQuestSettings.bestRedField)
-createDropdown(questFarmSettingsSection, "White Pollen From", whiteFields, {"autoQuestSettings", "bestWhiteField"}, true).Set(macrov2.autoQuestSettings.bestWhiteField)
+createDefaultDropdown(questFarmSettingsSection, "Best Field for Blue Pollen", blueFields, {"autoQuestSettings", "bestBlueField"}, true):Select(macrov2.autoQuestSettings.bestBlueField)
+createDefaultDropdown(questFarmSettingsSection, "Best Field for Red Pollen", redFields, {"autoQuestSettings", "bestRedField"}, true):Select(macrov2.autoQuestSettings.bestRedField)
+createDefaultDropdown(questFarmSettingsSection, "Best Field for White Pollen", whiteFields, {"autoQuestSettings", "bestWhiteField"}, true):Select(macrov2.autoQuestSettings.bestWhiteField)
 
 questPrioritySettingsSection = createSection(autoQuestTab, "Quests Priority Settings")
-createToggle(questPrioritySettingsSection, "Prioritize Mob Kill Quests", {"autoQuestSettings", "prioritizeMobKill"}, true).Set(true)
+createToggle(questPrioritySettingsSection, "Prioritize Mob Kill Quests", {"autoQuestSettings", "prioritizeMobKill"}, true):Set(true)
 createToggle(questPrioritySettingsSection, "Enable NPC Priorities", {"autoQuestSettings", "enablePriorities"}, true)
-createDropdown(questPrioritySettingsSection, "Select NPC", npcsTable, false, function(selectedNpc) 
+createDefaultDropdown(questPrioritySettingsSection, "Select NPC", npcsTable, false, function(selectedNpc) 
     if temptable.selectedPriorityNpc == selectedNpc then return end
     temptable.selectedPriorityNpc = selectedNpc
     local npcPriority = getQuestSetting(selectedNpc, "prio")
-    temptable.npcPrioSlider.Set(tonumber(npcPriority))
-end).Set("Polar Bear")
+    temptable.npcPrioSlider:Set(tonumber(npcPriority))
+end):Select("Polar Bear")
 
 temptable.npcPrioSlider = createSlider(questPrioritySettingsSection, "Select Npc Priority", {Min = 1, Max = 15, Default = 1}, false, function(newPrio)
     if temptable.selectedPriorityNpc == "Bee Bear 5" then
@@ -5823,14 +5637,14 @@ for i = 1,3 do
         -- print("Dropdown1")
 
         customPlanterSections[cycleName][cycleStep].Planter = 
-            customPlanterSections[cycleName].section:Dropdown("Field "..cycleStep.." Planter", customPlanterDropdown, function(newPlanter) 
+            createDefaultDropdown(customPlanterSections[cycleName].section, "Field "..cycleStep.." Planter", customPlanterDropdown, false, function(newPlanter) 
                 macrov2["customPlanterSettings"][cycleName][cycleStep].planter = newPlanter
             end)
 
         -- print("Dropdown2")
 
         customPlanterSections[cycleName][cycleStep].Field = 
-            customPlanterSections[cycleName].section:Dropdown("Field "..cycleStep, customFieldDropdown, function(newField) 
+            createDefaultDropdown(customPlanterSections[cycleName].section, "Field "..cycleStep, customFieldDropdown, false, function(newField) 
                 macrov2["customPlanterSettings"][cycleName][cycleStep].field = newField
             end)
 
@@ -5842,9 +5656,12 @@ for i = 1,3 do
             end, {Min = 1, Max = 100, Default = 75, ExtraPixels = 231})
 
         -- print("Updating")
-        customPlanterSections[cycleName][cycleStep].Planter.Set("None")
-        customPlanterSections[cycleName][cycleStep].Field.Set("None")
-        customPlanterSections[cycleName][cycleStep].HarvestAmount.Set(75)
+        customPlanterSections[cycleName][cycleStep].Planter:Select("None")
+        customPlanterSections[cycleName][cycleStep].Field:Select("None")
+        customPlanterSections[cycleName][cycleStep].HarvestAmount:Set(75)
+        if cycleStep < 5 then
+            createLabel(customPlanterSections[cycleName].section, "")
+        end
     end
 end
 
@@ -5875,29 +5692,34 @@ createSlider(puffshroomSettingsSection, "Maximum Level", {Min = 1, Max = 30, Def
 createToggle(puffshroomSettingsSection, "Farm Remaining Puffs", {"autoPuffshroomSettings", "farmRemaining"}, true)
 
 local puffshroomPrioSettingsSection = createSection(puffshroomsTab, "Puffshroom Priority Settings "..Star)
-createDropdown(puffshroomPrioSettingsSection, "Puffshroom Rarity", {"Mythic > Common", "Common > Mythic"}, {"autoPuffshroomSettings", "rarityPriority"}, true):Set(macrov2.autoPuffshroomSettings.rarityPriority)
-createDropdown(puffshroomPrioSettingsSection, "Puffshroom Level", {"High > Low", "Low > High"}, {"autoPuffshroomSettings", "levelPriority"}, true):Set(macrov2.autoPuffshroomSettings.levelPriority)
+createDefaultDropdown(puffshroomPrioSettingsSection, "Puffshroom Rarity", {"Mythic > Common", "Common > Mythic"}, {"autoPuffshroomSettings", "rarityPriority"}, true):Select(macrov2.autoPuffshroomSettings.rarityPriority)
+createDefaultDropdown(puffshroomPrioSettingsSection, "Puffshroom Level", {"High > Low", "Low > High"}, {"autoPuffshroomSettings", "levelPriority"}, true):Select(macrov2.autoPuffshroomSettings.levelPriority)
 end
 
-
-
-miscellaneousTab = createTab("Misc")
--- createToggle(miscellaneousTab,)
-createButton(miscellaneousTab,"Hide all textures", function() 
-    if temptable.gpuSaverActivated then return end
-    temptable.gpuSaverActivated = true
-    local function _(ok)
+LPH_NO_VIRTUALIZE(function()
+    local temp1 = 0
+    getgenv().hide = function(ok)
         for __,v in pairs(ok:GetChildren()) do
+            temp1 = temp1 + 1
+            if temp1%100 == 0 then task.wait() end
             if v.Name == "Gates" then continue end
             pcall(function() 
                 if v.ClassName == "Decal" then v:Destroy()
                 else v.Material = "Plastic"
                 end
             end)
-            _(v)
+            getgenv().hide(v)
         end
     end
-    _(game.Workspace)
+end)()
+
+
+miscellaneousTab = createTab("Misc")
+-- createToggle(miscellaneousTab,)
+createButton(miscellaneousTab,"Hide all textures", "Crash my game!", function() 
+    if temptable.gpuSaverActivated then return end
+    temptable.gpuSaverActivated = true
+    hide(game.Workspace)
 end)
 
 settingsTab = createTab("Settings")
@@ -5907,11 +5729,11 @@ createSlider(autoFarmSettingsSection, "Convert Honey At", {Min = 0, Max = 100, D
 createToggle(autoFarmSettingsSection, "Convert Hive Balloon", "converthiveballoon", true)
 createSlider(autoFarmSettingsSection, "Convert Balloon At (blessing minutes)", {Min = 0, Max = 60, Default = 0} , {"convertSettings", "convertballoonat"}, true)
 createSlider(autoFarmSettingsSection, "Farm In Field When Full", {Min = 0, Max = 60, Default = 0} , {"convertSettings", "secondsBeforeConvert"}, true)
-createToggle(autoFarmSettingsSection, "Convert Honey", "convertHoney", true).Set(true)
+createToggle(autoFarmSettingsSection, "Convert Honey", "convertHoney", true):Set(true)
 
 localPlayerSettingsSection = createSection(settingsTab, "Local Player Settings")
 createSlider(localPlayerSettingsSection, "Walk Speed", {Min = 20, Max = 90, Default = 60} ,{"localPlayerSettings","walkSpeed"}, true)
-createSlider(localPlayerSettingsSection, "Tween Speed", {Min = 1, Max = 10, Default = 5} ,{"localPlayerSettings","tweenSpeed"}, true)
+createSlider(localPlayerSettingsSection, "Tween Speed", {Min = 1, Max = 12, Default = 7} ,{"localPlayerSettings","tweenSpeed"}, true)
 
 createToggle(localPlayerSettingsSection, "Speedhack", "speedhack", function(State) 
     macrov2.toggles.speedhack = State
@@ -5946,12 +5768,9 @@ end)
 
 raresSettingsSection = createSection(settingsTab, "Rares Settings")
 
-local raresListDropdown
-raresListDropdown = createDropdown(raresSettingsSection, "Rares List (select to remove)", macrov2.vars.rares, {"vars", "rares"}, function(tokenId) 
-	if type(macrov2.vars.rares) ~= "table" then return end
+local raresListDropdown = createRemovableDropdown(raresSettingsSection, "Rares List (select to remove)", macrov2.vars.rares, nil, function(tokenId) 
 	table.remove(macrov2.vars.rares, table.find(macrov2.vars.rares, tokenId))
 	api.notify("Macro V3 | Success", "Removed "..tokenId.."\nfrom rares list", 2)
-	raresListDropdown.Update(macrov2.vars.rares)
 end)
 
 createInput(raresSettingsSection, "Add Rares", "Names only", false, function(tokenId) 
@@ -5963,14 +5782,14 @@ createInput(raresSettingsSection, "Add Rares", "Names only", false, function(tok
         return
     end
     table.insert(macrov2.vars.rares,tokenId)
-    raresListDropdown.Update(macrov2.vars.rares)
+    raresListDropdown:Update(macrov2.vars.rares)
     api.notify("Macro V3 | Success", "Added "..tokenId.."\nto rares list", 2)
 end)
 
 
 safetySettingsSection = createSection(settingsTab, "Safety Settings")
-createDropdown(safetySettingsSection, "Accessory Equip Method", {"Tween", "Teleport", "Remote"}, {"vars", "equipAccessoryMethod"}, true).Set(macrov2.vars.equipAccessoryMethod)
-createDropdown(safetySettingsSection, "Movement Method", {"Tween"}, false, function()end).Set("Tween")
+createDefaultDropdown(safetySettingsSection, "Accessory Equip Method", {"Tween", "Teleport", "Remote"}, {"vars", "equipAccessoryMethod"}, true):Select(macrov2.vars.equipAccessoryMethod)
+createDefaultDropdown(safetySettingsSection, "Movement Method", {"Tween"}, false, function()end):Select("Tween")
 
 
 autoDispenserSection = createSection(settingsTab, "Auto Dispensers")
@@ -6026,7 +5845,7 @@ end)
 
 createToggle(webhookSection, "Ping discord id", {"webhookSettings", "pingUser"}, true)
 
-createButton(webhookSection, "Test Webhook", function()
+createButton(webhookSection, "Test Webhook", "", function()
     sendHourlyWebhook(true)
 end)
 
@@ -6042,7 +5861,7 @@ createToggle(webhookSettingsSection, "Truncated only", {"webhookSettings", "only
 
 configTab = createTab("Config")
 defaultConfigSection = createSection(configTab, "Default Config")
-createButton(defaultConfigSection, "Save Settings", saveConfig)
+createButton(defaultConfigSection, "Save Settings", "Save!", saveConfig)
 
 if scriptType == LPH_STRENC("Paid") then
 
@@ -6061,46 +5880,73 @@ end
 end
 
 paidMiscSection = createSection(premiumTab, "Misc")
-createToggle(paidMiscSection, "Alert on Vicious Spawn", {"alertSettings", "viciousAlert"}, true).Set(true)
+createToggle(paidMiscSection, "Alert on Vicious Spawn", {"alertSettings", "viciousAlert"}, true):Set(true)
 
 local autoRJSection = createSection(premiumTab, "Auto Royal Jelly")
 
-local selectedBeesDropdown
-local selectedRaritiesDropdown
+-- local selectedBeesDropdown
+-- local selectedRaritiesDropdown
 
 local RJSettings = temptable.autoRJSettings
 
-autoRJSection:Dropdown("Add Bee", beesTable.namesOnly, function(selectedBee) 
-    if not table.find(RJSettings.selectedBees, selectedBee) then
-        if RJSettings.requireGifted then selectedBee = "Gifted "..selectedBee end
-        table.insert(RJSettings.selectedBees, selectedBee)
-        selectedBeesDropdown.Update(RJSettings.selectedBees)
+createMultiDropdown(autoRJSection, "Selected Bees", beesTable.namesOnly, false, 
+    function(selected) 
+        if not table.find(RJSettings.selectedBees, selected) then
+            -- if RJSettings.requireGifted then selectedBee = "Gifted "..selectedBee end
+            table.insert(RJSettings.selectedBees, selected)
+        end
+    end,
+    function(deselected)
+        local selectedIndex = table.find(RJSettings.selectedBees, deselected)
+        RJSettings.selectedBees[selectedIndex] = nil
     end
-end)
+)
 
-autoRJSection:Dropdown("Add Rarity", beesTable.raritiesTable, function(selectedRarity) 
-    if not table.find(RJSettings.selectedRarities, selectedRarity) then
-        if RJSettings.requireGifted then selectedRarity = "Gifted "..selectedRarity end
-        table.insert(RJSettings.selectedRarities, selectedRarity)
-        selectedRaritiesDropdown.Update(RJSettings.selectedRarities)
+-- autoRJSection:Dropdown("Add Bee", beesTable.namesOnly, function(selectedBee) 
+--     if not table.find(RJSettings.selectedBees, selectedBee) then
+--         if RJSettings.requireGifted then selectedBee = "Gifted "..selectedBee end
+--         table.insert(RJSettings.selectedBees, selectedBee)
+--         selectedBeesDropdown.Update(RJSettings.selectedBees)
+--     end
+-- end)
+
+createMultiDropdown(autoRJSection, "Selected Rarities", beesTable.raritiesTable, false, 
+    function(selected) 
+        if not table.find(RJSettings.selectedRarities, selected) then
+            -- if RJSettings.requireGifted then selectedRarity = "Gifted "..selectedRarity end
+            table.insert(RJSettings.selectedRarities, selected)
+            selectedRaritiesDropdown.Update(RJSettings.selectedRarities)
+        end
+    end,
+    function(deselected)
+        local selectedIndex = table.find(RJSettings.selectedRarities, deselected)
+        RJSettings.selectedRarities[selectedIndex] = nil
     end
-end)
+)
 
-autoRJSection:Toggle("Require Gifted", function(newState) 
-    RJSettings.requireGifted = newState
-end)
+-- autoRJSection:Dropdown("Add Rarity", beesTable.raritiesTable, function(selectedRarity) 
+--     if not table.find(RJSettings.selectedRarities, selectedRarity) then
+--         if RJSettings.requireGifted then selectedRarity = "Gifted "..selectedRarity end
+--         table.insert(RJSettings.selectedRarities, selectedRarity)
+--         selectedRaritiesDropdown.Update(RJSettings.selectedRarities)
+--     end
+-- end)
 
-selectedBeesDropdown = autoRJSection:Dropdown("Selected Bees", RJSettings.selectedBees, function(selectedBee)
-    local selectedIndex = table.find(RJSettings.selectedBees, selectedBee)
-    RJSettings.selectedBees[selectedIndex] = nil
-    selectedBeesDropdown.Update(RJSettings.selectedBees)
-end)
+-- autoRJSection:Toggle("Require Gifted", function(newState) 
+--     RJSettings.requireGifted = newState
+-- end)
 
-selectedRaritiesDropdown = autoRJSection:Dropdown("Selected Rarities", RJSettings.selectedRarities, function(selectedRarity)
-    local selectedIndex = table.find(RJSettings.selectedRarities, selectedRarity)
-    RJSettings.selectedRarities[selectedIndex] = nil
-    selectedRaritiesDropdown.Update(RJSettings.selectedRarities)
-end)
+-- selectedBeesDropdown = autoRJSection:Dropdown("Selected Bees", RJSettings.selectedBees, function(selectedBee)
+--     local selectedIndex = table.find(RJSettings.selectedBees, selectedBee)
+--     RJSettings.selectedBees[selectedIndex] = nil
+--     selectedBeesDropdown.Update(RJSettings.selectedBees)
+-- end)
+
+-- selectedRaritiesDropdown = autoRJSection:Dropdown("Selected Rarities", RJSettings.selectedRarities, function(selectedRarity)
+--     local selectedIndex = table.find(RJSettings.selectedRarities, selectedRarity)
+--     RJSettings.selectedRarities[selectedIndex] = nil
+--     selectedRaritiesDropdown.Update(RJSettings.selectedRarities)
+-- end)
 
 autoRJSection:Toggle("Stop on any gifted", function(newState) 
     RJSettings.requireAnyGifted = newState
@@ -6109,8 +5955,8 @@ end)
 autoRJSection:Slider("Left > Right", function(newCoordinate) RJSettings.xCoord = newCoordinate end, {Min = 1, Max = 5, Default = 3})
 autoRJSection:Slider("Down > Up", function(newCoordinate) RJSettings.yCoord = newCoordinate end, {Min = 1, Max = 10, Default = 1})
 
-createButton(autoRJSection, "Start Auto RJ", startAutoRJ)
-createButton(autoRJSection, "Emergency Stop", stopAutoRJ)
+createButton(autoRJSection, "Start Auto RJ", "", startAutoRJ)
+createButton(autoRJSection, "Emergency Stop", "", stopAutoRJ)
 
 premiumTab:Category("TP To Rare")
 
@@ -6124,8 +5970,7 @@ createToggle(premiumTab, "TP To Rare (Dangerous if used incorrectly)", {"toggles
                         if v.CFrame.YVector.Y == 1 then
                             if v.Transparency < 0.5 then
                                 decal = v:FindFirstChildOfClass("Decal")
-				if type(macrov2.vars.rares) ~= "table" then return end
-                                for e, r in pairs(macrov2.vars.rares) do
+                                for e, r in next, macrov2.vars.rares do
                                     local rare, rareError = getItemByName(tostring(r))
                                     local rareTexture = rare and rare.Icon
                                     if rareTexture and decal and v ~= nil and rareTexture == decal.Texture then
@@ -6152,29 +5997,29 @@ end)
 --     print(isBeeExpected(plrHive.Cells[("C%s,%s"):format(RJSettings.xCoord, RJSettings.yCoord)]))
 -- end)
 
-local RoboBearChallangeSection = createSection(premiumTab, "Robo Bear Challange")
-createToggle(RoboBearChallangeSection, "Auto RBC", {"RoboBearChallangeSettings", "autoRBC"}, function(State) 
-    if State then
-        Tasks:Add("Auto RBC", function() 
-            while task.wait() do
-                local roboPassCount = getClientStatCache("Eggs", "RoboPass") or 0
-                if not temptable.autoRBC.isUnlocked then
-                    temptable.autoRBC.isUnlocked = secureCall(StatTools.CheckReqs, Activatables, 
-                        getClientStatCache(), {Type = "Completed Quests", Name = "Robo1"})
-                    task.wait(1)
-                    continue
-                end
-                if roboPassCount > 0 then
-                    if not temptable.autoRBC.isActive and tick() - temptable.autoRBC.latestRBC > 30 then 
-                        mainAutoRBCFunction()
-                    end
-                end
-            end
-        end, true)
-    else
-        if Tasks:Get("Auto RBC") then Tasks:Cancel("Auto RBC") end
-    end
-end)
+-- local RoboBearChallangeSection = createSection(premiumTab, "Robo Bear Challange")
+-- createToggle(RoboBearChallangeSection, "Auto RBC", {"RoboBearChallangeSettings", "autoRBC"}, function(State) 
+--     if State then
+--         Tasks:Add("Auto RBC", function() 
+--             while task.wait() do
+--                 local roboPassCount = getClientStatCache("Eggs", "RoboPass") or 0
+--                 if not temptable.autoRBC.isUnlocked then
+--                     temptable.autoRBC.isUnlocked = secureCall(StatTools.CheckReqs, Activatables, 
+--                         getClientStatCache(), {Type = "Completed Quests", Name = "Robo1"})
+--                     task.wait(1)
+--                     continue
+--                 end
+--                 if roboPassCount > 0 then
+--                     if not temptable.autoRBC.isActive and tick() - temptable.autoRBC.latestRBC > 30 then 
+--                         mainAutoRBCFunction()
+--                     end
+--                 end
+--             end
+--         end, true)
+--     else
+--         if Tasks:Get("Auto RBC") then Tasks:Cancel("Auto RBC") end
+--     end
+-- end)
 
 
 end
@@ -6195,13 +6040,9 @@ Tasks:Add("Stats Tracker", function()
         local honeyGained = currentHoney - temptable.honeyAtStart
         local honeyPerHour = math.floor(honeyGained / timePassed) * 3600
         local dailyHoney = getDailyHoney()
-        local balloonPolen = temptable.lastBalloonPollen
-        if tick() - temptable.lastClientStatCacheUpdate > 5 then
-            local temp = updateClientStatCache("HiveBalloon")
-            balloonPolen = temp and temp["Pollen"] or 0
-            temptable.lastBalloonPollen = balloonPolen
-            temptable.lastClientStatCacheUpdate = tick()
-        end
+
+        local hiveBalloonData = getClientStatCache("HiveBalloon")
+        local balloonPolen = hiveBalloonData and hiveBalloonData["Pollen"] or 0
     
         local honeyGainedString = truncate(honeyGained)
         local honeyPerHourString = truncate(honeyPerHour)
@@ -6210,27 +6051,28 @@ Tasks:Add("Stats Tracker", function()
         local honeyPerDayString = truncate(dailyHoney)
         local balloonPolenString = truncate(balloonPolen)
         
-        windowa().MainFrame.SubFrame.LinesAndFrames.UptimeText.Text = "Uptime: "..uptimeString
+        -- windowa().MainFrame.SubFrame.LinesAndFrames.UptimeText.Text = "Uptime: "..uptimeString
         --honeyPerHourLabel.Set("Honey Per Hour: "..honeyPerHourString)
-        gainedHoneyLabel.Set("Gained Honey: "..honeyGainedString)
+        -- gainedHoneyLabel.Set("Gained Honey: "..honeyGainedString)
         --dailyHoneyLabel.Set("Honey Per Day: "..honeyPerDayString)
-        Window:ChangeValues(honeyPerHourString.."/hr",honeyPerDayString.."/d")
-        balloonPollenLabel.Set("Balloon Pollen: "..balloonPolenString)
+        Window:UpdateInformations(honeyPerHourString.."/hr",honeyPerDayString.."/d")
+        balloonPollenLabel:Set("Balloon Pollen: "..balloonPolenString)
     
-        kingBeetleTimerLabel.Set("King Beetle: "..getSpawnerCooldownText("King Beetle Cave"))
-        tunnelBearTimerLabel.Set("Tunnel Bear: "..getSpawnerCooldownText("TunnelBear"))
-        coconutCrabTimerLabel.Set("Coconut Crab: "..getSpawnerCooldownText("CoconutCrab"))
-        stumpSnailTimerLabel.Set("Stump Snail: "..getSpawnerCooldownText("StumpSnail"))
+        kingBeetleTimerLabel:Set("King Beetle: "..getSpawnerCooldownText("King Beetle Cave"))
+        tunnelBearTimerLabel:Set("Tunnel Bear: "..getSpawnerCooldownText("TunnelBear"))
+        coconutCrabTimerLabel:Set("Coconut Crab: "..getSpawnerCooldownText("CoconutCrab"))
+        stumpSnailTimerLabel:Set("Stump Snail: "..getSpawnerCooldownText("StumpSnail"))
     end
 end, true)
 
 Tasks:Add("Important Listeners", function() 
-    while task.wait(.5) do
+    while task.wait(1) do
         checkPuffshrooms()
         checkPopStar()
 
         temptable.isRBCActive = getClientStatCache("RoboChallenges", "ActiveChallenge") and true or false
-
+        -- print(1)
+        temptable.EquippedCollector = updateClientStatCache("EquippedCollector")
         -- checkLeafsAndSparkles()
     end
 end, true)
@@ -6262,7 +6104,9 @@ end
 -- end
 
 -- Listening
-local addedListener1 = Workspace.Particles.ChildAdded:Connect(function(instance)
+local Listeners = {}
+
+table.insert(Listeners,Workspace.Particles.ChildAdded:Connect(function(instance)
     task.wait()
 	if string.find(instance.Name, "Vicious") then
 		temptable.detected.vicious = true
@@ -6281,9 +6125,9 @@ local addedListener1 = Workspace.Particles.ChildAdded:Connect(function(instance)
             temptable.lastShowerRegistered = tick()
         end
 	end
-end)
+end))
 
-local removedListener1 = Workspace.Particles.ChildRemoved:Connect(function(instance)
+table.insert(Listeners,Workspace.Particles.ChildRemoved:Connect(function(instance)
 	if string.find(instance.Name, "Vicious") then
 		temptable.detected.vicious = false
 
@@ -6300,9 +6144,9 @@ local removedListener1 = Workspace.Particles.ChildRemoved:Connect(function(insta
         end
 
 	end
-end)
+end))
 
-local addedListener2 = Workspace.Particles.Folder2.ChildAdded:Connect(function(instance)
+table.insert(Listeners,Workspace.Particles.Folder2.ChildAdded:Connect(function(instance)
     task.wait()
     if instance.Name ~= "Sprout" then return end
 	local sproutRarity = sproutRarities[instance.Color]
@@ -6315,9 +6159,9 @@ local addedListener2 = Workspace.Particles.Folder2.ChildAdded:Connect(function(i
     if sproutRarity ~= "Moon" then
         temptable.sproutsTable[sproutId] = {Model = instance, Field = sproutField}
     end
-end)
+end))
 
-local removedListener2 = Workspace.Particles.Folder2.ChildRemoved:Connect(function(instance)
+table.insert(Listeners,Workspace.Particles.Folder2.ChildRemoved:Connect(function(instance)
     task.wait()
     if instance.Name ~= "Sprout" then return end
 	local sproutId = instance:FindFirstChild("SproutId")
@@ -6326,26 +6170,26 @@ local removedListener2 = Workspace.Particles.Folder2.ChildRemoved:Connect(functi
     else
         -- warn("no sprout id :skull:")
     end
-end)
+end))
 
-local addedListener3 = Workspace.Monsters.ChildAdded:Connect(function(monster)
+table.insert(Listeners,Workspace.Monsters.ChildAdded:Connect(function(monster)
     task.wait()
     if monster.Name:find("Vicious") then
         local viciousOnField = findField(monster.HumanoidRootPart.Position)
         bssAlert("Vicious", monster.Name.." spawned on "..viciousOnField.Name)
     end
-end)
+end))
 
-local leafSparkleAddedListener = Flowers.DescendantAdded:Connect(function(instance)
+table.insert(Listeners,Flowers.DescendantAdded:Connect(function(instance)
     task.wait()
     if instance.Name == "LeafBurst" then
         table.insert(temptable.leafTable, instance)
     elseif instance.Name == "Sparkles" then
         table.insert(temptable.sparklesTable, instance)
     end
-end)
+end))
 
-local leafSparkleRemovedListener = Flowers.DescendantRemoving:Connect(function(instance)
+table.insert(Listeners,Flowers.DescendantRemoving:Connect(function(instance)
     task.wait()
     if instance.Name == "LeafBurst" then
         local index = table.find(temptable.leafTable, instance)
@@ -6358,41 +6202,40 @@ local leafSparkleRemovedListener = Flowers.DescendantRemoving:Connect(function(i
             table.remove(temptable.sparklesTable, index)
         end
     end
-end)
+end))
 
-local tokenAddedListener = temptable.tokenpath.ChildAdded:Connect(function(token)
+table.insert(Listeners,temptable.tokenpath.ChildAdded:Connect(function(token)
     task.wait()
     if token.Name == "C" then
         table.insert(temptable.tokensTable, token)
     end
-end)
+end))
 
-local tokenRemovedListener = temptable.tokenpath.ChildRemoved:Connect(function(token)
+table.insert(Listeners,temptable.tokenpath.ChildRemoved:Connect(function(token)
     local tokenIndex = table.find(temptable.tokensTable, token)
     if tokenIndex then
         table.remove(temptable.tokensTable, tokenIndex)
     end
-end)
+end))
 
-local balloonAddedListener
-local balloonRemovedListener
 task.spawn(function() 
     repeat task.wait(1) until Workspace:FindFirstChild("Balloons") and Workspace.Balloons:FindFirstChild("FieldBalloons")
-    balloonAddedListener = Workspace.Balloons.FieldBalloons.ChildAdded:Connect(function(balloon) 
+    temptable.FieldBalloons = Workspace.Balloons.FieldBalloons
+    table.insert(Listeners,Workspace.Balloons.FieldBalloons.ChildAdded:Connect(function(balloon) 
         task.wait()
         if balloon:FindFirstChild("PlayerName") and balloon.PlayerName.Value == player.Name then
             local balloonId = balloon.Name:gsub("Balloon", "")
             temptable.balloonsTable[tonumber(balloonId)] = balloon
         end
-    end)
-    balloonRemovedListener = Workspace.Balloons.FieldBalloons.ChildRemoved:Connect(function(balloon)
+    end))
+    table.insert(Listeners,Workspace.Balloons.FieldBalloons.ChildRemoved:Connect(function(balloon)
         if balloon:FindFirstChild("PlayerName") and balloon.PlayerName.Value == player.Name then
             local balloonId = balloon.Name:gsub("Balloon", "")
             if balloonId then
                 temptable.balloonsTable[tonumber(balloonId)] = nil
             end
         end
-    end)
+    end))
 end)
 
 local whitelistedDupedTokens = {
@@ -6400,11 +6243,9 @@ local whitelistedDupedTokens = {
     "5877939956"
 }
 
-local dupedTokensAddedListener
-local dupedTokensRemovedListener
 task.spawn(function() 
     repeat task.wait(1) until Workspace:FindFirstChild("Camera") and Workspace.Camera:FindFirstChild("DupedTokens")
-    dupedTokensAddedListener = Workspace.Camera.DupedTokens.ChildAdded:Connect(function(instance) 
+    table.insert(Listeners,Workspace.Camera.DupedTokens.ChildAdded:Connect(function(instance) 
         task.wait(.05)
         local texture = instance.FrontDecal.Texture
         local tokenId = tostring(tostring(texture):match("%d+"))
@@ -6412,14 +6253,14 @@ task.spawn(function()
         if table.find(whitelistedDupedTokens, tokenId) then
             table.insert(temptable.dupedTokensTable, instance)
         end
-    end)
-    dupedTokensRemovedListener = Workspace.Camera.DupedTokens.ChildRemoved:Connect(function(instance) 
+    end))
+    table.insert(Listeners,Workspace.Camera.DupedTokens.ChildRemoved:Connect(function(instance) 
         task.wait(.05)
         local index = table.find(temptable.dupedTokensTable, instance)
         if index then
             table.remove(temptable.dupedTokensTable, index)
         end
-    end)
+    end))
 end)
 
 
@@ -6441,7 +6282,89 @@ end
 
 -- warn(player.Name)
 
+function loadConfig(configName)
+    -- warn(("Config name: BSS_%s.json"):format(configName))
+    local success, err = pcall(function()
+        if not readfile or not isfile then error("Load config is not supported by your executor.") end
+        if not isfile("macrov3/BSS_"..configName..".json") then error("You don't have a saved config.") end
+
+        local oldConfig = macrov2
+
+        local loadedConfig = jsonDecode(readfile("macrov3/BSS_"..configName..".json"))
+        if not loadedConfig or typeof(loadedConfig) ~= "table" then error("Config not loaded.") end
+
+        for settingsCategory, settingsTable in pairs(macrov2) do
+            if loadedConfig[settingsCategory] then
+                for settingName, settingValue in pairs(settingsTable) do
+                    if loadedConfig[settingsCategory][settingName] ~= nil then
+                        macrov2[settingsCategory][settingName] = loadedConfig[settingsCategory][settingName]
+                    end
+                end
+            end
+        end
+
+        -- warn(111)
+
+        -- getgenv().macrov2 = loadedConfig
+        for settingsType,v in pairs(guiElements) do
+            -- warn(settingsType)
+            for settingName,k in pairs(v) do
+                local tag = k["Tag"]
+                -- warn(tag, settingsType)
+                if tag == "Dropdown" then
+                    xpcall(function()
+                        if typeof(macrov2[settingsType][settingName]) == "table" then
+                            k:Update(macrov2[settingsType][settingName])
+                        else
+                            k:Select(macrov2[settingsType][settingName])
+                        end
+                    end,function(err) warn("Config load error:",err) end)
+                elseif tag == "Slider" then
+                    xpcall(function()
+                        k:Set(tonumber(macrov2[settingsType][settingName]))
+                    end,function(err) warn("Config load error:",err) end)
+                elseif tag == "Toggle" then
+                    xpcall(function()
+                        k:Set(macrov2[settingsType][settingName])
+                    end,function(err) warn("Config load error:",err) end)
+                elseif tag == "Box" then
+                    xpcall(function()
+                        k:Set(macrov2[settingsType][settingName])
+                    end,function(err) warn("Config load error:",err) end)
+                end
+            end
+        end
+        if typeof(macrov2.vars.rares) == "table" and #macrov2.vars.rares > 0 then raresListDropdown:Update(macrov2.vars.rares) end
+        temptable.shouldEquipDefaultMask = true
+    end)
+
+    for cycleName, cycleTable in pairs(customPlanterSections) do
+        for cycleStep, stepUIs in pairs(cycleTable) do
+            if cycleStep == "section" then continue end
+
+            stepUIs.HarvestAmount:Set(macrov2.customPlanterSettings[cycleName][cycleStep].harvestAmount)
+            stepUIs.Field:Select(macrov2.customPlanterSettings[cycleName][cycleStep].field)
+            stepUIs.Planter:Select(macrov2.customPlanterSettings[cycleName][cycleStep].planter)
+        end
+    end
+
+    if success then
+        api.notify("Macro V3 - Config", "Config successfully loaded.",3)
+    elseif err then
+        local errMsg
+        if api.isSynV3() then
+            errMsg = err:split(":")[1]
+        else
+            errMsg = err:split(":")[3]
+        end
+        api.notify("Macro V3 - Config", "Error while loading config: \n"..(errMsg or "no error"),3)
+    end
+end
+
+print("[Macro V3]:", "Loading configuration file...")
+
 loadConfig(player.Name)
+
 if _G.debugging then
     warn("Loading config donee. Waiting..")
     task.wait(5)
@@ -6479,30 +6402,83 @@ task.spawn(function()
     Workspace.Gates["15 Bee Gate"].Frame.CanCollide = false
 end)
 
+function destroyBodyGyro()
+    if not (player and player.Character and player.Character:FindFirstChild("UpperTorso")) then return end
+    local characterTorso = player.Character:FindFirstChild("UpperTorso")
 
+    local bodyGyro = characterTorso:FindFirstChildOfClass("BodyGyro")
+    if bodyGyro then bodyGyro:Destroy() end
+end
+
+function lookAt(targetPos)
+    if not (player and player.Character and player.Character:FindFirstChild("UpperTorso")) then return end
+    local characterTorso = player.Character:FindFirstChild("UpperTorso")
+
+    local bodyGyro = characterTorso:FindFirstChildOfClass("BodyGyro") or Instance.new("BodyGyro")
+    bodyGyro.MaxTorque = Vector3.new(0, math.huge, 0)
+    bodyGyro.D = 10
+    bodyGyro.P = 5000
+    bodyGyro.CFrame = CFrame.new(characterTorso.CFrame.p, targetPos)
+    bodyGyro.Parent = characterTorso
+end
+
+Tasks:Add("Auto Face", function() 
+    while task.wait() do
+        if not true or not (macrov2.autoFarmSettings.faceCenter or macrov2.autoFarmSettings.faceBalloons or macrov2.autoFarmSettings.faceFlames)
+        then destroyBodyGyro() task.wait(0.5) continue end
+
+        if not api.humanoidrootpart() or not player.Character then destroyBodyGyro() task.wait(1) continue end
+
+        local characterTorso = player.Character:FindFirstChild("UpperTorso")
+
+        local playerStandsOn = findField(api.humanoidrootpart().Position)
+        if not playerStandsOn or not characterTorso then destroyBodyGyro() task.wait(0.1) continue end
+
+        if macrov2.autoFarmSettings.faceCenter then
+            lookAt(playerStandsOn.Position)
+            continue
+        end
+
+        if macrov2.autoFarmSettings.faceBalloons then
+            local bestBalloon = getBestFieldBalloon()
+            if bestBalloon and bestBalloon:FindFirstChild("BalloonBody") then
+                lookAt(bestBalloon.BalloonBody.Position)
+            else
+                destroyBodyGyro()
+            end
+            continue
+        end
+
+        if macrov2.autoFarmSettings.faceFlames then
+            local pos = nil
+            for i,v in pairs(game.Workspace.PlayerFlames:GetChildren()) do
+                pcall(function() 
+                    if v:FindFirstChild("PF") and v.PF.Color.Keypoints[1].Value.G ~= 0 and (v.Position - torso.Position).magnitude < 20 then
+                        pos = v.Position
+                    end
+                end)
+                if pos then break end
+            end
+            if pos then
+                lookAt(pos)
+            else
+                destroyBodyGyro()
+            end
+            continue
+        end
+    end
+end, true)
 
 local killMV2 = Instance.new("BindableEvent")
 
 killMV2.Event:connect(function() 
-    print("Killing Macro V3")
-    macrov2 = defaultMacroV2Config
+    -- print("Killing Macro V3")
+    -- macrov2 = defaultMacroV2Config
+    stopTween()
     pcall(function() Tasks:CancelAll() end)
-    pcall(function() addedListener1:Disconnect() end)
-    pcall(function() removedListener1:Disconnect() end)
-
-    pcall(function() addedListener2:Disconnect() end)
-
-    pcall(function() addedListener3:Disconnect() end)
-
-    pcall(function() tokenAddedListener:Disconnect() end)
-    pcall(function() tokenRemovedListener:Disconnect() end)
-
-    pcall(function() balloonAddedListener:Disconnect() end)
-    pcall(function() balloonRemovedListener:Disconnect() end)
-
-    
-    pcall(function() dupedTokensAddedListener:Disconnect() end)
-    pcall(function() dupedTokensRemovedListener:Disconnect() end)
+    for _,listener in pairs(Listeners) do
+        pcall(function() listener:Disconnect() end)
+    end
 end)
 
 LPH_NO_VIRTUALIZE(function() 
@@ -6514,12 +6490,4 @@ LPH_NO_VIRTUALIZE(function()
     end
 end)()
 
-local UserInputService, RunService = game:GetService("UserInputService"), game:GetService("RunService")
-
-UserInputService.WindowFocusReleased:Connect(function()
-	RunService:Set3dRenderingEnabled(false);
-end)
-
-UserInputService.WindowFocused:Connect(function()
-	RunService:Set3dRenderingEnabled(true);
-end)
+print("[Macro V3]:", "Executed Successfully!")
