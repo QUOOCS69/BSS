@@ -6040,9 +6040,13 @@ Tasks:Add("Stats Tracker", function()
         local honeyGained = currentHoney - temptable.honeyAtStart
         local honeyPerHour = math.floor(honeyGained / timePassed) * 3600
         local dailyHoney = getDailyHoney()
-
-        local hiveBalloonData = getClientStatCache("HiveBalloon")
-        local balloonPolen = hiveBalloonData and hiveBalloonData["Pollen"] or 0
+        local balloonPolen = temptable.lastBalloonPollen
+        if tick() - temptable.lastClientStatCacheUpdate > 5 then
+            local temp = updateClientStatCache("HiveBalloon")
+            balloonPolen = temp and temp["Pollen"] or 0
+            temptable.lastBalloonPollen = balloonPolen
+            temptable.lastClientStatCacheUpdate = tick()
+        end
     
         local honeyGainedString = truncate(honeyGained)
         local honeyPerHourString = truncate(honeyPerHour)
@@ -6051,17 +6055,17 @@ Tasks:Add("Stats Tracker", function()
         local honeyPerDayString = truncate(dailyHoney)
         local balloonPolenString = truncate(balloonPolen)
         
-        -- windowa().MainFrame.SubFrame.LinesAndFrames.UptimeText.Text = "Uptime: "..uptimeString
+        windowa().MainFrame.SubFrame.LinesAndFrames.UptimeText.Text = "Uptime: "..uptimeString
         --honeyPerHourLabel.Set("Honey Per Hour: "..honeyPerHourString)
-        -- gainedHoneyLabel.Set("Gained Honey: "..honeyGainedString)
+        gainedHoneyLabel.Set("Gained Honey: "..honeyGainedString)
         --dailyHoneyLabel.Set("Honey Per Day: "..honeyPerDayString)
-        Window:UpdateInformations(honeyPerHourString.."/hr",honeyPerDayString.."/d")
-        balloonPollenLabel:Set("Balloon Pollen: "..balloonPolenString)
+        Window:ChangeValues(honeyPerHourString.."/hr",honeyPerDayString.."/d")
+        balloonPollenLabel.Set("Balloon Pollen: "..balloonPolenString)
     
-        kingBeetleTimerLabel:Set("King Beetle: "..getSpawnerCooldownText("King Beetle Cave"))
-        tunnelBearTimerLabel:Set("Tunnel Bear: "..getSpawnerCooldownText("TunnelBear"))
-        coconutCrabTimerLabel:Set("Coconut Crab: "..getSpawnerCooldownText("CoconutCrab"))
-        stumpSnailTimerLabel:Set("Stump Snail: "..getSpawnerCooldownText("StumpSnail"))
+        kingBeetleTimerLabel.Set("King Beetle: "..getSpawnerCooldownText("King Beetle Cave"))
+        tunnelBearTimerLabel.Set("Tunnel Bear: "..getSpawnerCooldownText("TunnelBear"))
+        coconutCrabTimerLabel.Set("Coconut Crab: "..getSpawnerCooldownText("CoconutCrab"))
+        stumpSnailTimerLabel.Set("Stump Snail: "..getSpawnerCooldownText("StumpSnail"))
     end
 end, true)
 
@@ -6491,3 +6495,13 @@ LPH_NO_VIRTUALIZE(function()
 end)()
 
 print("[Macro V3]:", "Executed Successfully!")
+
+local UserInputService, RunService = game:GetService("UserInputService"), game:GetService("RunService")
+
+UserInputService.WindowFocusReleased:Connect(function()
+	RunService:Set3dRenderingEnabled(false);
+end)
+
+UserInputService.WindowFocused:Connect(function()
+	RunService:Set3dRenderingEnabled(true);
+end)
