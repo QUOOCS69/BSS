@@ -4683,7 +4683,7 @@ function webhookFieldsList()
 	end
     if macrov2.webhookSettings.showDailyHoney then
 		table.insert(fields, {
-			["name"] = "Honey Per Day:     ", -- 
+			["name"] = "Honey Earned Today:     ", -- 
 			["value"] = honeyPerDayString,
 			["inline"] = false
 		})
