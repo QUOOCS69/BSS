@@ -5728,7 +5728,7 @@ autoFarmSettingsSection = createSection(settingsTab, "AutoFarm settings")
 createSlider(autoFarmSettingsSection, "Convert Honey At", {Min = 0, Max = 100, Default = 100}, {"convertSettings", "convertat"}, true)
 createToggle(autoFarmSettingsSection, "Convert Hive Balloon", "converthiveballoon", true)
 createSlider(autoFarmSettingsSection, "Convert Balloon At (blessing minutes)", {Min = 0, Max = 60, Default = 0} , {"convertSettings", "convertballoonat"}, true)
-createSlider(autoFarmSettingsSection, "Farm In Field When Full", {Min = 0, Max = 60, Default = 0} , {"convertSettings", "secondsBeforeConvert"}, true)
+createSlider(autoFarmSettingsSection, "Farm In Field When Full", {Min = 0, Max = 120, Default = 0} , {"convertSettings", "secondsBeforeConvert"}, true)
 createToggle(autoFarmSettingsSection, "Convert Honey", "convertHoney", true):Set(true)
 
 localPlayerSettingsSection = createSection(settingsTab, "Local Player Settings")
