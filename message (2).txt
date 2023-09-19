@@ -3445,7 +3445,7 @@ function farmShowerAndCoco()
             local key, warningisk = next(temptable.showersTable)
             if warningisk and warningisk.Parent and warningisk.Transparency > 0.09 then
                 startTween(warningisk.Position, 350)
-                -- tween(0.05, warningisk.Position, true)
+                -- tween(0.06, warningisk.Position, true)
                 repeat task.wait()
                 until not warningisk.Parent or warningisk.Transparency <= 0.08
                 temptable.showersTable[key] = nil
